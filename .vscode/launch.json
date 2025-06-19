@@ -29,6 +29,16 @@
             "projectName": "mypage-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-FeedServiceApplication<feed-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.jigubangbang.feed_service.FeedServiceApplication",
+            "projectName": "feed-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
