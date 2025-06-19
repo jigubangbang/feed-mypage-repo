@@ -19,6 +19,16 @@
             "projectName": "com.jigubangbang-user-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MypageServiceApplication<mypage-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.jigubangbang.mypage_service.MypageServiceApplication",
+            "projectName": "mypage-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

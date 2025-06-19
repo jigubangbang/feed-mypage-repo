@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jigubangbang</groupId>
-	<artifactId>user-service</artifactId>
+	<artifactId>feed-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>user-service</name>
+	<name>feed-service</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
