@@ -15,4 +15,9 @@ public class IndexController {
     public String index( Model model ) {
         return "forward:index.html";
     }
+
+    @GetMapping( "/public" )
+    public String publicIndex( Model model ) {
+        return "forward:index.html";
+    }
 }
