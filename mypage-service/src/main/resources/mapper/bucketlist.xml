@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.mypage_service.mapper.BucketlistMapper">
+    <select id="getBucketlist" resultType="com.jigubangbang.mypage_service.model.BucketlistDto" parameterType="map">
+        SELECT * FROM bucketlist
+        WHERE user_id = #{userId}
+        <if test="completionStatus != null">
+            AND completion_status = #{completionStatus}
+        </if>
+        ORDER BY display_order ASC
+    </select>
+    <insert id="addBucketlist" parameterType="com.jigubangbang.mypage_service.model.BucketlistDto">
+        INSERT INTO bucketlist (user_id, title, description, display_order)
+        VALUES 
+        (#{userId}, #{title}, #{description},
+            COALESCE(
+                (SELECT MAX(display_order) + 1 FROM bucketlist WHERE user_id = #{userId}),
+                1
+            )
+        )
+    </insert>
+    <delete id="deleteBucketlist" parameterType="int">
+        DELETE FROM bucketlist
+        WHERE id=#{id}
+    </delete>
+    <update id="checkBucketlist" parameterType="int">
+        UPDATE bucketlist
+        SET completion_status = NOT completion_status
+        WHERE id = #{id}
+    </update>
+</mapper>

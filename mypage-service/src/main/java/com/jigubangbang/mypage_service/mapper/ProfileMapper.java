@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.jigubangbang.mypage_service.model.CountryDto;
+import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
 
 @Mapper
@@ -19,4 +21,9 @@ public interface ProfileMapper {
     public List<String> getFollowing(String userId);
     public int followUser(Map<String, Object> map);
     public int unfollowUser(Map<String, Object> map);
+
+    public List<CountryDto> getTopCountries(String userId);
+    public List<LanguageDto> getUserLanguages(String userId);
+    public int addLanguage(Map<String, Object> map);
+    public int removeLanguage(int id);
 }

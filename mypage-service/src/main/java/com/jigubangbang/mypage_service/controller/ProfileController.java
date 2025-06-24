@@ -1,6 +1,7 @@
 package com.jigubangbang.mypage_service.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -10,14 +11,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jigubangbang.mypage_service.model.CountryDto;
+import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
 import com.jigubangbang.mypage_service.service.ProfileService;
 
-import feign.Response;
 import jakarta.annotation.Resource;
 import com.jigubangbang.mypage_service.util.DateUtils;
 
@@ -83,5 +86,56 @@ public class ProfileController {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Map.of("error", "Failed to unfollower user"));
+    }
+
+    @GetMapping("/{userId}/favorites")
+    public ResponseEntity<Map<String, Object>> getTopCountries(@PathVariable String userId) {
+        List<CountryDto> countryList = profileService.getTopCountries(userId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalItems", countryList.size());
+        response.put("countries", countryList);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{userId}/languages")
+    public ResponseEntity<Map<String, Object>> getUserLanguages(@PathVariable String userId) {
+        List<LanguageDto> languageList = profileService.getUserLanguages(userId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalItems", languageList.size());
+        response.put("languages", languageList);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{userId}/languages")
+    public ResponseEntity<Map<String, Object>> addLanguage(@PathVariable String userId,
+            @RequestBody Map<String, Object> request) {
+        int languageId = (int) request.get("languageId");
+        String proficiency = (String) request.get("proficiency");
+        
+        boolean success = profileService.addLanguage(userId, languageId, proficiency);
+
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Language added successfully");
+            return ResponseEntity.ok(response); 
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to add language"));
+    }
+
+    @DeleteMapping("/{userId}/languages/{languageId}")
+    public ResponseEntity<Map<String, Object>> removeLanguage(@PathVariable int languageId) {
+        boolean success = profileService.removeLanguage(languageId);
+
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Removed language successfully");
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to remove language"));
     }
 }

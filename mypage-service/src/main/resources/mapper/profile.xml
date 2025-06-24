@@ -54,4 +54,25 @@
         WHERE follower_id = #{followerId}
         AND following_id = #{followingId}
     </delete>
+    <select id="getTopCountries" resultType="com.jigubangbang.mypage_service.model.CountryDto" parameterType="String">
+        SELECT c.id, c.name, cf.country_rank
+        FROM country_fav cf
+        JOIN country c on cf.country_id = c.id
+        WHERE cf.user_id = #{userId}
+        ORDER BY cf.country_rank ASC
+    </select>
+    <select id="getUserLanguages" resultType="com.jigubangbang.mypage_service.model.LanguageDto" parameterType="String">
+        SELECT lu.id, l.name, lu.proficiency
+        FROM language_user lu
+        JOIN language l on l.id = lu.language_id
+        WHERE lu.user_id = #{userId}
+    </select>
+    <insert id="addLanguage" parameterType="map">
+        INSERT INTO language_user (user_id, language_id, proficiency)
+        VALUES (#{userId}, #{languageId}, #{proficiency})
+    </insert>
+    <delete id="removeLanguage" parameterType="int">
+        DELETE FROM language_user
+        WHERE id = #{id}
+    </delete>
 </mapper>
