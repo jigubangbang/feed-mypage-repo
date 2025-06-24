@@ -5,7 +5,53 @@
 
 <mapper namespace="com.jigubangbang.mypage_service.mapper.ProfileMapper">
     <select id="getProfile" resultType="com.jigubangbang.mypage_service.model.ProfileDto" parameterType="String">
-        SELECT * FROM user
+        SELECT *,
+        (SELECT COUNT(*) FROM follow WHERE following_id=#{userId}) AS followerCount,
+        (SELECT COUNT(*) FROM follow WHERE follower_id=#{userId}) AS followingCount,
+        (SELECT COUNT(*) FROM country_visit WHERE user_id=#{userId}) AS countryVisitCount
+        FROM user
         WHERE user_id = #{userId}
     </select>
+    <select id="getCountryName" resultType="String" parameterType="String">
+        SELECT name
+        FROM country
+        WHERE id = #{countryId}
+    </select>
+    <select id="getTravelStyleName" resultType="String" parameterType="String">
+        SELECT label
+        FROM travel_style
+        WHERE id = #{travelStyleId}
+    </select>
+    <update id="updateTravelStatus" parameterType="map">
+        UPDATE user
+        SET travel_status = #{travelStatus}
+        WHERE user_id = #{userId}
+    </update>
+    <select id="getFollowStatus" resultType="boolean" parameterType="map">
+        SELECT EXISTS
+        (SELECT 1
+        FROM follow
+            WHERE follower_id = #{followerId}
+            AND following_id = #{followingId}
+        )
+    </select>
+    <select id="getFollowers" resultType="String" parameterType="String">
+        SELECT follower_id
+        FROM follow
+        WHERE following_id = #{userId}
+    </select>
+    <select id="getFollowing" resultType="String" parameterType="String">
+        SELECT following_id
+        FROM follow
+        WHERE follower_id = #{userId}
+    </select>
+    <insert id="followUser" parameterType="map">
+        INSERT INTO follow (follower_id, following_id)
+        VALUES (#{followerId}, #{followingId})
+    </insert>
+    <delete id="unfollowUser" parameterType="map">
+        DELETE FROM follow
+        WHERE follower_id = #{followerId}
+        AND following_id = #{followingId}
+    </delete>
 </mapper>
