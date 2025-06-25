@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jigubangbang.mypage_service.model.BucketlistDto;
 import com.jigubangbang.mypage_service.service.BucketlistService;
+import com.jigubangbang.mypage_service.util.DateUtils;
 
 import jakarta.annotation.Resource;
 
@@ -31,17 +32,24 @@ public class BucketlistController {
     public ResponseEntity<Map<String, Object>> getBucketlist(@PathVariable String userId, 
             @RequestParam(required=false) String status) {
         Boolean completionStatus = null;
-        if (status.equalsIgnoreCase("completed")) {
+        if (status != null && status.equalsIgnoreCase("completed")) {
             completionStatus = true;
         }
-        if (status.equalsIgnoreCase("incomplete")) {
+        if (status != null && status.equalsIgnoreCase("incomplete")) {
             completionStatus = false;
         }
 
         List<BucketlistDto> bucketlist = bucketlistService.getBucketlist(userId, completionStatus);
+
+        for (BucketlistDto dto : bucketlist) {
+            dto.setFormattedDate(DateUtils.formatToKoreanDate(dto.getCompletedAt()));
+        }
+
         Map<String, Object> response = new HashMap<>();
         response.put("totalItems", bucketlist.size());
-        response.put("bucketlist", bucketlist);
+        response.put("completeItems", bucketlistService.getCompleteItemsCount(userId));
+        response.put("incompleteItems", bucketlistService.getIncompleteItemsCount(userId));
+        response.put("items", bucketlist);
 
         return ResponseEntity.ok(response);
     }
@@ -82,5 +90,11 @@ public class BucketlistController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Map.of("error", "Failed to (un)check item"));
+    }
+
+    @PutMapping("/{userId}/bucketlist/reorder")
+    public ResponseEntity<Map<String, Object>> updateDisplayOrder(@RequestBody List<BucketlistDto> orderList) {
+        bucketlistService.updateDisplayOrder(orderList);
+        return ResponseEntity.ok().build();
     }
 }

@@ -16,4 +16,6 @@ public class BucketlistDto {
     private Timestamp createdAt;
     private Timestamp completedAt;
     private int displayOrder;
+
+    private String formattedDate;
 }

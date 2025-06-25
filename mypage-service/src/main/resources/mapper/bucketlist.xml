@@ -16,7 +16,9 @@
         VALUES 
         (#{userId}, #{title}, #{description},
             COALESCE(
-                (SELECT MAX(display_order) + 1 FROM bucketlist WHERE user_id = #{userId}),
+                (SELECT MAX(b.display_order) + 1 
+                FROM (SELECT * FROM bucketlist) AS b
+                WHERE b.user_id = #{userId}),
                 1
             )
         )
@@ -27,7 +29,22 @@
     </delete>
     <update id="checkBucketlist" parameterType="int">
         UPDATE bucketlist
-        SET completion_status = NOT completion_status
+        SET 
+            completion_status = NOT completion_status,
+            completed_at = CURRENT_TIMESTAMP
         WHERE id = #{id}
     </update>
+    <update id="updateDisplayOrder" parameterType="com.jigubangbang.mypage_service.model.BucketlistDto">
+        UPDATE bucketlist
+        SET display_order = #{displayOrder}
+        WHERE id = #{id}
+    </update>
+    <select id="getCompleteItemsCount" parameterType="String">
+        SELECT COUNT(*) FROM bucketlist
+        WHERE completion_status AND user_id = #{userId}
+    </select>
+    <select id="getIncompleteItemsCount" parameterType="String">
+        SELECT COUNT(*) FROM bucketlist
+        WHERE NOT completion_status AND user_id = #{userId}
+    </select>
 </mapper>

@@ -34,4 +34,18 @@ public class BucketlistService {
     public boolean checkBucketlist(int bucketlistId) {
         return bucketlistMapper.checkBucketlist(bucketlistId) > 0;
     }
+
+    public void updateDisplayOrder(List<BucketlistDto> orderList) {
+        for(BucketlistDto dto : orderList) {
+            bucketlistMapper.updateDisplayOrder(dto);
+        }
+    }
+
+    public int getCompleteItemsCount(String userId) {
+        return bucketlistMapper.getCompleteItemsCount(userId);
+    }
+
+    public int getIncompleteItemsCount(String userId) {
+        return bucketlistMapper.getIncompleteItemsCount(userId);
+    }
 }

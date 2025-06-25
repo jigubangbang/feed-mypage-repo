@@ -13,4 +13,7 @@ public interface BucketlistMapper {
     public int addBucketlist(BucketlistDto dto);
     public int deleteBucketlist(int id);
     public int checkBucketlist(int id);
+    public int updateDisplayOrder(BucketlistDto dto);
+    public int getCompleteItemsCount(String userId);
+    public int getIncompleteItemsCount(String userId);
 }
