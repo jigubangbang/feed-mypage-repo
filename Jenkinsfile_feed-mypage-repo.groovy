@@ -64,7 +64,7 @@ pipeline {
                     }
                     echo "Eureka Server is ready. Proceeding with feed-mypage-repo bundle."
 
-                    def ecrRepoName = 'msa-feed-mypage-bundle' // ECR 레포지토리 이름 (번들용)
+                    def ecrRepoName = 'msa-feed-mypage-repo' // ECR 레포지토리 이름 (번들용)
                     def fullEcrRepoUrl = "${env.AWS_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com/${ecrRepoName}"
 
                     echo "--- Building and Deploying feed-mypage-repo bundle ---"
