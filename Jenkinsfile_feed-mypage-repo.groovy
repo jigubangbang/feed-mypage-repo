@@ -89,8 +89,8 @@ pipeline {
                     // k8s YAML 파일들은 feed-mypage-repo/k8s/ 디렉토리에 있다고 가정
                     sh """
                         KUBECONFIG=${env.KUBECONFIG_PATH} sed -i "s|__ECR_IMAGE_FULL_PATH__|${fullEcrRepoUrl}:${env.IMAGE_TAG}|g" k8s/deployment.yaml
-                        KUBECONFIG=${env.KUBACONFIG_PATH} kubectl apply -f k8s/deployment.yaml -n default
-                        KUBECONFIG=${env.KUBACONFIG_PATH} kubectl apply -f k8s/service.yaml -n default
+                        KUBECONFIG=${env.KUBECONFIG_PATH} kubectl apply -f k8s/deployment.yaml -n default
+                        KUBECONFIG=${env.KUBECONFIG_PATH} kubectl apply -f k8s/service.yaml -n default
                     """
 
                     // --- Kubernetes Deployment Debugging ---
