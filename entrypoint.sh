@@ -1,4 +1,4 @@
-
+#!/bin/sh
 echo "Starting Feed Service..."
 java -jar /app/feed-service.jar &
 FEED_PID=$!
