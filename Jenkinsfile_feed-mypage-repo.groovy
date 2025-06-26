@@ -30,7 +30,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-
                 // deployAWS 브랜치 체크아웃
                 // credentialsId는 Jenkins에 등록된 GitHub PAT Credential ID여야 합니다.
                 // 이 레포지토리의 크리덴셜 ID를 사용하세요 (예: 'github-feed-mypage-pat')
@@ -85,6 +84,22 @@ pipeline {
                         KUBECONFIG=${env.KUBECONFIG_PATH} sed -i "s|__ECR_IMAGE_FULL_PATH__|${fullEcrRepoUrl}:${env.IMAGE_TAG}|g" k8s/deployment.yaml
                         KUBECONFIG=${env.KUBECONFIG_PATH} kubectl apply -f k8s/deployment.yaml -n default
                         KUBECONFIG=${env.KUBECONFIG_PATH} kubectl apply -f k8s/service.yaml -n default
+                    """
+
+                    // --- Kubernetes Deployment Debugging ---
+                    echo "--- Kubernetes Deployment Debugging ---"
+                    echo "배포 상태 확인 전 파드 목록:"
+                    // 'app' 레이블은 k8s/deployment.yaml의 spec.selector.matchLabels에 있는 값을 사용해야 합니다.
+                    // 예시: app=feed-mypage-repo
+                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl get pods -n default -l app=feed-mypage-repo || true"
+                    echo "배포 이벤트 확인:"
+                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl describe deployment/feed-mypage-repo-deployment -n default || true"
+                    echo "파드 로그 확인 (모든 파드):"
+                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl get pods -n default -l app=feed-mypage-repo -o custom-columns=NAME:.metadata.name --no-headers | xargs -r -I {} sh -c 'echo \"--- Logs for pod {}: ---\"; KUBECONFIG=${env.KUBECONFIG_PATH} kubectl logs {} -n default || true; echo \"\";' || true"
+                    echo "--- End Kubernetes Deployment Debugging ---"
+                    // --- 디버깅 끝 ---
+
+                    sh """
                         KUBECONFIG=${env.KUBECONFIG_PATH} kubectl rollout status deployment/feed-mypage-repo-deployment -n default --timeout=600s || exit 1
                     """
                     echo "Feed-Mypage-Repo bundle 배포 완료."
