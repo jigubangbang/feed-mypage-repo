@@ -12,7 +12,7 @@
         </where>
     </select>
     <select id="getVisitedCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitDto" parameterType="map">
-        SELECT cv.id, cv.user_id, cv.country_id, cv.start_date, cv.end_date
+        SELECT cv.id, cv.user_id, cv.country_id, cv.start_date, cv.end_date, c.name
         FROM country_visit cv
         JOIN country c ON c.id = cv.country_id
         WHERE user_id = #{userId}
@@ -23,5 +23,41 @@
     <select id="getWishlistCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitDto" parameterType="String">
         SELECT * FROM country_wish
         WHERE user_id = #{userId}
+    </select>
+    <select id="getVisitedCountPerContinent" resultType="map" parameterType="String">
+        SELECT c.continent, COUNT(*) AS visitedCount
+        FROM country_visit cv
+        JOIN country c ON c.id = cv.country_id
+        WHERE cv.user_id = #{userId}
+        GROUP BY c.continent
+    </select>
+    <select id="getTotalCountPerContinent" resultType="map">
+        SELECT continent, COUNT(*) AS totalCount
+        FROM country
+        GROUP BY continent
+    </select>
+    <select id="getTotalCountriesCount" resultType="int">
+        SELECT COUNT(*) FROM country
+    </select>
+    <select id="getUserVisitedCount" parameterType="String">
+        SELECT COUNT(*)
+        FROM country_visit
+        WHERE user_id = #{userId}
+    </select>
+    <select id="getUserVisitPercentile" parameterType="String" resultType="double">
+        SELECT
+            100.0 * (
+                SELECT COUNT(DISTINCT user_id)
+                FROM (
+                    SELECT user_id, COUNT(*) AS cnt
+                    FROM country_visit
+                    GROUP BY user_id
+                    HAVING cnt &lt;= (
+                        SELECT COUNT(*) FROM country_visit WHERE user_id = #{userId}
+                    )
+                ) AS ranking
+            ) / (
+                SELECT COUNT(DISTINCT user_id) FROM country_visit
+            ) AS percentile
     </select>
 </mapper>

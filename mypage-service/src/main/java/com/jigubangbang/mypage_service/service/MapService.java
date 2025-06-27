@@ -30,4 +30,24 @@ public class MapService {
     public List<CountryVisitDto> getWishlistCountries(String userId) {
         return mapMapper.getWishlistCountries(userId);
     }
+
+    public List<Map<String, Object>> getVisitedCountPerContinent(String userId) {
+        return mapMapper.getVisitedCountPerContinent(userId);
+    }
+
+    public List<Map<String, Object>> getTotalCountPerContinent() {
+        return mapMapper.getTotalCountPerContinent();
+    }
+
+    public int getTotalCountriesCount() {
+        return mapMapper.getTotalCountriesCount();
+    }
+
+    public int getUserVisitedCount(String userId) {
+        return mapMapper.getUserVisitedCount(userId);
+    }
+
+    public double getUserVisitPercentile(String userId) {
+        return mapMapper.getUserVisitPercentile(userId);
+    }
 }

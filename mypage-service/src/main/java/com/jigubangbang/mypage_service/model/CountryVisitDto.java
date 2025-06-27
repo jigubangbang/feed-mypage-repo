@@ -15,6 +15,7 @@ public class CountryVisitDto {
     private Timestamp startDate;
     private Timestamp endDate;
 
+    private String name;
     private String formattedStartDate;
     private String formattedEndDate;
 }
