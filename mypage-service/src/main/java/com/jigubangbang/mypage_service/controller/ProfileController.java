@@ -70,7 +70,7 @@ public class ProfileController {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(Map.of("error", "Failed to follower user"));
+            .body(Map.of("error", "Failed to follow user"));
     }
 
     @DeleteMapping("/{userId}/network")
@@ -85,7 +85,7 @@ public class ProfileController {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(Map.of("error", "Failed to unfollower user"));
+            .body(Map.of("error", "Failed to unfollow user"));
     }
 
     @GetMapping("/{userId}/favorites")

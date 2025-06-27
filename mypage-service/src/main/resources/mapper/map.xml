@@ -11,6 +11,10 @@
             </if>
         </where>
     </select>
+    <select id="getCityList" resultType="com.jigubangbang.mypage_service.model.CityDto" parameterType="String">
+        SELECT * FROM city
+        WHERE country_id = #{countryId}
+    </select>
     <select id="getVisitedCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitDto" parameterType="map">
         SELECT cv.id, cv.user_id, cv.country_id, cv.start_date, cv.end_date, c.name
         FROM country_visit cv
@@ -59,5 +63,31 @@
             ) / (
                 SELECT COUNT(DISTINCT user_id) FROM country_visit
             ) AS percentile
+    </select>
+    <insert id="addVisitCountry" parameterType="com.jigubangbang.mypage_service.model.CountryVisitDto">
+        INSERT INTO country_visit (user_id, country_id, start_date, end_date)
+        VALUES (
+            #{userId}, 
+            #{countryId}, 
+            COALESCE(#{startDate}, CURRENT_TIMESTAMP), 
+            COALESCE(#{endDate}, CURRENT_TIMESTAMP)
+        )
+    </insert>
+    <delete id="removeVisitCountry" parameterType="int">
+        DELETE FROM country_visit
+        WHERE id = #{id}
+    </delete>
+    <insert id="addWishlistCountry" parameterType="com.jigubangbang.mypage_service.model.CountryWishDto">
+        INSERT INTO country_wish (user_id, country_id)
+        VALUES (#{userId}, #{countryId})
+    </insert>
+    <delete id="removeWishlistCountry" parameterType="int">
+        DELETE FROM country_wish
+        WHERE id = #{id}
+    </delete>
+    <select id="getCountryFeed" resultType="com.jigubangbang.mypage_service.model.FeedPostDto" parameterType="map">
+        SELECT * FROM feed_post
+        WHERE country_id = #{countryId}
+        AND user_id = #{userId}
     </select>
 </mapper>

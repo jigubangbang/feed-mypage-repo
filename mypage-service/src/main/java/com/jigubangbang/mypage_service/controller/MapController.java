@@ -4,15 +4,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jigubangbang.mypage_service.model.CityDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
 import com.jigubangbang.mypage_service.model.CountryVisitDto;
+import com.jigubangbang.mypage_service.model.CountryWishDto;
+import com.jigubangbang.mypage_service.model.FeedPostDto;
 import com.jigubangbang.mypage_service.service.MapService;
 import com.jigubangbang.mypage_service.util.DateUtils;
 
@@ -121,6 +128,78 @@ public class MapController {
         response.put("totalCountries", totalCountries);
         response.put("percentile", percentile);
         response.put("continents", stats);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{userId}/countries/visited")
+    public ResponseEntity<Map<String, Object>> addVisitCountry(@RequestBody CountryVisitDto dto) {
+        boolean success = mapService.addVisitCountry(dto);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Added country successfully");
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to add country"));
+    }
+
+    @DeleteMapping("/{userId}/countries/visited/{id}")
+    public ResponseEntity<Map<String, Object>> removeVisitCountry(@PathVariable int id) {
+        boolean success = mapService.removeVisitCountry(id);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Removed country successfully");
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to remove country"));
+    }
+
+    @PostMapping("/{userId}/countries/wishlist")
+    public ResponseEntity<Map<String, Object>> addWishlistCountry(@RequestBody CountryWishDto dto) {
+        boolean success = mapService.addWishlistCountry(dto);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Added country successfully");
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to add country"));
+    }
+
+    @DeleteMapping("/{userId}/countries/wishlist/{id}")
+    public ResponseEntity<Map<String, Object>> removeWishlistCountry(@PathVariable int id) {
+        boolean success = mapService.removeWishlistCountry(id);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Removed country successfully");
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Removed to remove country"));
+    }
+
+    @GetMapping("/countries/{countryId}/cities")
+    public ResponseEntity<Map<String, Object>> getCityList(@PathVariable String countryId) {
+        List<CityDto> cities = mapService.getCityList(countryId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalItems", cities.size());
+        response.put("countryId", countryId);
+        response.put("cities", cities);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{userId}/countries/{countryId}")
+    public ResponseEntity<Map<String, Object>> getCountryFeed(@PathVariable String userId, @PathVariable String countryId) {
+        List<FeedPostDto> feedPosts = mapService.getCountryFeed(userId, countryId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalItems", feedPosts.size());
+        response.put("countryId", countryId);
+        response.put("posts", feedPosts);
 
         return ResponseEntity.ok(response);
     }

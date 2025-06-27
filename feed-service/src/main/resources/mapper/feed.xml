@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.feed_service.mapper.FeedMapper">
+    <select id="getUserPosts" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="String">
+        SELECT * FROM feed_post
+        WHERE user_id = #{userId}
+    </select>
+    <select id="getPostDetail" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="int">
+        SELECT * FROM feed_post
+        WHERE id = #{id}
+    </select>
+    <select id="getPostLikeStatus" parameterType="map">
+        SELECT COUNT(*) FROM feed_like
+        WHERE user_id = #{userId}
+        AND feed_id = #{feedId}
+    </select>
+    <select id="getPostBookmarkStatus" parameterType="map">
+        SELECT COUNT(*) FROM feed_bookmark
+        WHERE user_id = #{userId}
+        AND feed_id = #{feedId}
+    </select>
+    <insert id="addPost" parameterType="com.jigubangbang.feed_service.model.PostDto">
+        INSERT INTO feed_post (user_id, country_id, city_id, title, start_date, end_date)
+        VALUES (
+            #{userId},
+            #{countryId},
+            #{cityId},
+            #{title}, 
+            COALESCE (#{startDate}, CURRENT_TIMESTAMP),
+            COALESCE (#{endDate}, CURRENT_TIMESTAMP)
+        );
+    </insert>
+    <delete id="deletePost" parameterType="int">
+        DELETE FROM feed_post
+        WHERE id = #{id}
+    </delete>
+    <insert id="likePost" parameterType="com.jigubangbang.feed_service.model.PostLikeDto">
+        INSERT INTO feed_like (feed_id, user_id)
+        VALUES (#{feedId}, #{userId})
+    </insert>
+    <delete id="unlikePost" parameterType="map">
+        DELETE FROM feed_like
+        WHERE feed_id = #{feedId}
+        AND user_id = #{userId}
+    </delete>
+    <insert id="bookmarkPost" parameterType="com.jigubangbang.feed_service.model.PostBookmarkDto">
+        INSERT INTO feed_bookmark (feed_id, user_id)
+        VALUES (#{feedId}, #{userId})
+    </insert>
+    <delete id="removeBookmarkPost" parameterType="map">
+        DELETE FROM feed_bookmark
+        WHERE feed_id = #{feedId}
+        AND user_id = #{userId}
+    </delete>
+</mapper>

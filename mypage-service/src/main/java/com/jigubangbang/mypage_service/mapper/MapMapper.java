@@ -5,8 +5,11 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.jigubangbang.mypage_service.model.CityDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
 import com.jigubangbang.mypage_service.model.CountryVisitDto;
+import com.jigubangbang.mypage_service.model.CountryWishDto;
+import com.jigubangbang.mypage_service.model.FeedPostDto;
 
 @Mapper
 public interface MapMapper {
@@ -18,4 +21,10 @@ public interface MapMapper {
     public int getTotalCountriesCount();
     public int getUserVisitedCount(String userId);
     public double getUserVisitPercentile(String userId);
+    public int addVisitCountry(CountryVisitDto dto);
+    public int removeVisitCountry(int id);
+    public int addWishlistCountry(CountryWishDto dto);
+    public int removeWishlistCountry(int id);
+    public List<CityDto> getCityList(String countryId);
+    public List<FeedPostDto> getCountryFeed(Map<String, Object> map);
 }
