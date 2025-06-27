@@ -62,7 +62,7 @@ pipeline {
                     // --- Config Server 자체 디버깅 시작 (feed-mypage-repo 배포 전) ---
                     echo "--- Config Server 상태 상세 디버깅 시작 ---"
                     echo "Config Server 파드 목록:"
-                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl get pods -n default -l app=config-server || true" # config-server의 실제 레이블로 변경
+                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl get pods -n default -l app=config-server || true"
                     echo "Config Server 배포 이벤트 확인:"
                     sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl describe deployment/config-server-deployment -n default || true"
                     echo "Config Server 파드 로그 확인 (왜 DOWN 상태인지 확인):"
