@@ -28,7 +28,7 @@ public class ProfileController {
     private ProfileService profileService;
 
     // TODO : replace all sessionUserId ("bbb") w/ real logged in user
-    @GetMapping("/public/{userId}")
+    @GetMapping("/{userId}")
     public ProfileDto getProfile(@PathVariable String userId) {
         String sessionUserId = "bbb"; // TODO: replace w/ session user
         ProfileDto profileDto = profileService.getProfileDto(userId);
