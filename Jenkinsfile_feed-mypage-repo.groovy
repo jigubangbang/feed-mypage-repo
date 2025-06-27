@@ -57,7 +57,19 @@ pipeline {
                     retry(3) { // 불안정한 네트워크 상황 대비 재시도
                         sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl wait --for=condition=available deployment/config-server-deployment -n default --timeout=600s || exit 1"
                     }
-                    echo "Config Server is ready."
+                    echo "Config Server is ready." // 이 메시지는 deployment가 available 상태라는 의미이지만, health가 UP이라는 의미는 아닙니다.
+
+                    // --- Config Server 자체 디버깅 시작 (feed-mypage-repo 배포 전) ---
+                    echo "--- Config Server 상태 상세 디버깅 시작 ---"
+                    echo "Config Server 파드 목록:"
+                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl get pods -n default -l app=config-server || true" # config-server의 실제 레이블로 변경
+                    echo "Config Server 배포 이벤트 확인:"
+                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl describe deployment/config-server-deployment -n default || true"
+                    echo "Config Server 파드 로그 확인 (왜 DOWN 상태인지 확인):"
+                    sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl get pods -n default -l app=config-server -o custom-columns=NAME:.metadata.name --no-headers | xargs -r -I {} sh -c 'echo \"--- Config Server 파드 {} 로그: ---\"; KUBECONFIG=${env.KUBECONFIG_PATH} kubectl logs {} -n default || true; echo \"\";' || true"
+                    echo "--- Config Server 상태 상세 디버깅 끝 ---"
+                    // --- Config Server 자체 디버깅 끝 ---
+
                     retry(3) {
                         sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl wait --for=condition=available deployment/eureka-server-deployment -n default --timeout=600s || exit 1"
                     }
@@ -93,8 +105,8 @@ pipeline {
                         KUBECONFIG=${env.KUBECONFIG_PATH} kubectl apply -f k8s/service.yaml -n default
                     """
 
-                    // --- Kubernetes Deployment Debugging ---
-                    echo "--- Kubernetes Deployment Debugging ---"
+                    // --- Kubernetes Deployment Debugging (feed-mypage-repo 파드 관련) ---
+                    echo "--- Kubernetes Deployment Debugging (feed-mypage-repo 파드 관련) ---"
                     echo "배포 상태 확인 전 파드 목록:"
                     // 'app' 레이블은 k8s/deployment.yaml의 spec.selector.matchLabels에 있는 값을 사용해야 합니다.
                     // 예시: app=feed-mypage-repo
@@ -111,7 +123,7 @@ pipeline {
                     echo "파드 초기화 컨테이너 로그 확인 (wait-for-eureka):"
                     sh "KUBECONFIG=${env.KUBECONFIG_PATH} kubectl get pods -n default -l app=feed-mypage-repo -o custom-columns=NAME:.metadata.name --no-headers | xargs -r -I {} sh -c 'echo \"--- 초기화 컨테이너 (eureka) {} 로그: ---\"; KUBECONFIG=${env.KUBECONFIG_PATH} kubectl logs {} -n default -c wait-for-eureka || true; echo \"\";' || true"
 
-                    echo "--- End Kubernetes Deployment Debugging ---"
+                    echo "--- End Kubernetes Deployment Debugging (feed-mypage-repo 파드 관련) ---"
                     // --- 디버깅 끝 ---
 
                     sh """
