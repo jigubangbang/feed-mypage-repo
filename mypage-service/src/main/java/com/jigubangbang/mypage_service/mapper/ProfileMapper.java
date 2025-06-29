@@ -12,6 +12,7 @@ import com.jigubangbang.mypage_service.model.ProfileDto;
 @Mapper
 public interface ProfileMapper {
     public ProfileDto getProfile(String userId);
+    public int updateProfileImage(Map<String, Object> map);
     public String getCountryName(String countryId);
     public String getTravelStyleName(String travelStyleId);
     public int updateTravelStatus(Map<String, Object> map);

@@ -12,6 +12,11 @@
         FROM user
         WHERE user_id = #{userId}
     </select>
+    <update id="updateProfileImage" parameterType="map">
+        UPDATE user
+        SET profile_image = #{profileImage}
+        WHERE user_id = #{userId}
+    </update>
     <select id="getCountryName" resultType="String" parameterType="String">
         SELECT name
         FROM country

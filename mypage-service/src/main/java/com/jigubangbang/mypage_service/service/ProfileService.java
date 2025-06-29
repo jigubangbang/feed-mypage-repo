@@ -34,6 +34,13 @@ public class ProfileService {
         return profileDto;
     }
 
+    public boolean updateProfileImage(String userId, String profileImage) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("profileImage", profileImage);
+        return profileMapper.updateProfileImage(map) > 0;
+    }
+
     public boolean updateTravelStatus(String userId, String travelStatus) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);

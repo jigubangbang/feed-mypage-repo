@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.mypage_service.model.CountryDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
 import com.jigubangbang.mypage_service.service.ProfileService;
+import com.jigubangbang.mypage_service.service.S3Service;
 
 import jakarta.annotation.Resource;
 import com.jigubangbang.mypage_service.util.DateUtils;
@@ -29,6 +31,9 @@ import com.jigubangbang.mypage_service.util.DateUtils;
 public class ProfileController {
     @Resource
     private ProfileService profileService;
+
+    @Resource
+    private S3Service s3Service;
 
     // TODO : replace all sessionUserId ("bbb") w/ real logged in user
     @GetMapping("/{userId}")
@@ -41,6 +46,21 @@ public class ProfileController {
         
         profileDto.setFormattedDate(DateUtils.formatToKoreanDate(profileDto.getCreatedAt()));
         return profileDto;
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Map<String, Object>> uploadProfilePic(@RequestParam("file") MultipartFile file, @PathVariable String userId) {
+        try {
+            String s3Url = s3Service.uploadFile(file, "profile-pictures/");
+            profileService.updateProfileImage(userId, s3Url);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Uploaded profile image successfully");
+            response.put("profileImage", s3Url);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Upload failed"));
+        }
     }
 
     @PutMapping("/{userId}/travel-status")
