@@ -41,9 +41,9 @@ public class MapController {
         "Antarctica", "남극"
     );
 
-    @GetMapping("/countries/search")
-    public ResponseEntity<Map<String, Object>> searchCountries(@RequestParam(required=false) String keyword) {
-        List<CountryDto> countries = mapService.getCountryList(keyword);
+    @GetMapping("/{userId}/countries/search")
+    public ResponseEntity<Map<String, Object>> searchCountries(@RequestParam(required=false) String keyword, @PathVariable String userId) {
+        List<CountryDto> countries = mapService.getCountryList(userId, keyword);
 
         Map<String, Object> response = new HashMap<>();
         response.put("totalItems", countries.size());
@@ -145,9 +145,9 @@ public class MapController {
             .body(Map.of("error", "Failed to add country"));
     }
 
-    @DeleteMapping("/{userId}/countries/visited/{id}")
-    public ResponseEntity<Map<String, Object>> removeVisitCountry(@PathVariable int id) {
-        boolean success = mapService.removeVisitCountry(id);
+    @DeleteMapping("/{userId}/countries/visited/{countryId}")
+    public ResponseEntity<Map<String, Object>> removeVisitCountry(@PathVariable String userId, @PathVariable String countryId) {
+        boolean success = mapService.removeVisitCountry(userId, countryId);
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Removed country successfully");
@@ -170,9 +170,9 @@ public class MapController {
             .body(Map.of("error", "Failed to add country"));
     }
 
-    @DeleteMapping("/{userId}/countries/wishlist/{id}")
-    public ResponseEntity<Map<String, Object>> removeWishlistCountry(@PathVariable int id) {
-        boolean success = mapService.removeWishlistCountry(id);
+    @DeleteMapping("/{userId}/countries/wishlist/{countryId}")
+    public ResponseEntity<Map<String, Object>> removeWishlistCountry(@PathVariable String userId, @PathVariable String countryId) {
+        boolean success = mapService.removeWishlistCountry(userId, countryId);
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Removed country successfully");

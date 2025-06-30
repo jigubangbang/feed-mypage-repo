@@ -9,5 +9,7 @@ public class CountryDto {
     private String id;
     private String name;
     private String continent;
+    private boolean visitStatus;
+    private boolean wishStatus;
     private String countryRank;
 }

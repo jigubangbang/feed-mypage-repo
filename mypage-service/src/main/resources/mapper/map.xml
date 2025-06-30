@@ -3,8 +3,18 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jigubangbang.mypage_service.mapper.MapMapper">
-    <select id="getCountryList" resultType="com.jigubangbang.mypage_service.model.CountryDto" parameterType="String">
-        SELECT * FROM country
+    <select id="getCountryList" resultType="com.jigubangbang.mypage_service.model.CountryDto" parameterType="map">
+        SELECT
+            c.id,
+            c.name,
+            c.continent,
+            cv.user_id IS NOT NULL AS visitStatus,
+            cw.user_id IS NOT NULL AS wishStatus
+        FROM country c
+        LEFT JOIN country_visit cv
+            ON c.id = cv.country_id AND cv.user_id = #{userId}
+        LEFT JOIN country_wish cw
+            ON c.id = cw.country_id AND cw.user_id = #{userId}
         <where>
             <if test="keyword != null and keyword != ''">
                 name LIKE CONCAT('%', #{keyword}, '%')
@@ -73,17 +83,19 @@
             COALESCE(#{endDate}, CURRENT_TIMESTAMP)
         )
     </insert>
-    <delete id="removeVisitCountry" parameterType="int">
+    <delete id="removeVisitCountry" parameterType="map">
         DELETE FROM country_visit
-        WHERE id = #{id}
+        WHERE user_id = #{userId}
+        AND country_id = #{countryId}
     </delete>
     <insert id="addWishlistCountry" parameterType="com.jigubangbang.mypage_service.model.CountryWishDto">
         INSERT INTO country_wish (user_id, country_id)
         VALUES (#{userId}, #{countryId})
     </insert>
-    <delete id="removeWishlistCountry" parameterType="int">
+    <delete id="removeWishlistCountry" parameterType="map">
         DELETE FROM country_wish
-        WHERE id = #{id}
+        WHERE user_id = #{userId}
+        AND country_id = #{countryId}
     </delete>
     <select id="getCountryFeed" resultType="com.jigubangbang.mypage_service.model.FeedPostDto" parameterType="map">
         SELECT * FROM feed_post
