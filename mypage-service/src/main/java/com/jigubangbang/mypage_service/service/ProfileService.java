@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jigubangbang.mypage_service.mapper.ProfileMapper;
+import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
+import com.jigubangbang.mypage_service.model.LanguageUserDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
 
 @Service
@@ -39,6 +41,10 @@ public class ProfileService {
         map.put("userId", userId);
         map.put("profileImage", profileImage);
         return profileMapper.updateProfileImage(map) > 0;
+    }
+
+    public boolean updateBio(BioRequestDto dto) {
+        return profileMapper.updateBio(dto) > 0;
     }
 
     public boolean updateTravelStatus(String userId, String travelStatus) {
@@ -85,20 +91,26 @@ public class ProfileService {
         return profileMapper.getTopCountries(userId);
     }
 
-    public List<LanguageDto> getUserLanguages(String userId) {
+    public List<LanguageDto> getLanguageList(String userId, String keyword) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("keyword", keyword);
+        return profileMapper.getLanguageList(map);
+    }
+
+    public List<LanguageUserDto> getUserLanguages(String userId) {
         return profileMapper.getUserLanguages(userId);
     }
 
-    public boolean addLanguage(String userId, int languageId, String proficiency) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("userId", userId);
-        map.put("languageId", languageId);
-        map.put("proficiency", proficiency);
-        
-        return profileMapper.addLanguage(map) > 0;
+    public boolean addLanguage(LanguageUserDto dto) {
+        return profileMapper.addLanguage(dto) > 0;
     }
 
     public boolean removeLanguage(int id) {
         return profileMapper.removeLanguage(id) > 0;
+    }
+
+    public boolean updateLanguage(LanguageUserDto dto) {
+        return profileMapper.updateLanguage(dto) > 0;
     }
 }

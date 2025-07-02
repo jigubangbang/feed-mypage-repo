@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
+import com.jigubangbang.mypage_service.model.LanguageUserDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
 import com.jigubangbang.mypage_service.service.ProfileService;
 import com.jigubangbang.mypage_service.service.S3Service;
@@ -61,6 +63,18 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Upload failed"));
         }
+    }
+
+    @PutMapping("/{userId}/bio")
+    public ResponseEntity<Map<String, Object>> updateBio(@RequestBody BioRequestDto dto) {
+        boolean success = profileService.updateBio(dto);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Bio updated successfully");
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to update bio"));
     }
 
     @PutMapping("/{userId}/travel-status")
@@ -118,9 +132,19 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{userId}/languages/search")
+    public ResponseEntity<Map<String, Object>> getLanguageList(@PathVariable String userId, @RequestParam(required=false) String keyword) {
+        List<LanguageDto> languageList = profileService.getLanguageList(userId, keyword);
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalItems", languageList.size());
+        response.put("languages", languageList);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{userId}/languages")
     public ResponseEntity<Map<String, Object>> getUserLanguages(@PathVariable String userId) {
-        List<LanguageDto> languageList = profileService.getUserLanguages(userId);
+        List<LanguageUserDto> languageList = profileService.getUserLanguages(userId);
         Map<String, Object> response = new HashMap<>();
         response.put("totalItems", languageList.size());
         response.put("languages", languageList);
@@ -129,12 +153,8 @@ public class ProfileController {
     }
 
     @PostMapping("/{userId}/languages")
-    public ResponseEntity<Map<String, Object>> addLanguage(@PathVariable String userId,
-            @RequestBody Map<String, Object> request) {
-        int languageId = (int) request.get("languageId");
-        String proficiency = (String) request.get("proficiency");
-        
-        boolean success = profileService.addLanguage(userId, languageId, proficiency);
+    public ResponseEntity<Map<String, Object>> addLanguage(@RequestBody LanguageUserDto dto) {
+        boolean success = profileService.addLanguage(dto);
 
         if (success) {
             Map<String, Object> response = new HashMap<>();
@@ -145,9 +165,9 @@ public class ProfileController {
             .body(Map.of("error", "Failed to add language"));
     }
 
-    @DeleteMapping("/{userId}/languages/{languageId}")
-    public ResponseEntity<Map<String, Object>> removeLanguage(@PathVariable int languageId) {
-        boolean success = profileService.removeLanguage(languageId);
+    @DeleteMapping("/{userId}/languages/{id}")
+    public ResponseEntity<Map<String, Object>> removeLanguage(@PathVariable int id) {
+        boolean success = profileService.removeLanguage(id);
 
         if (success) {
             Map<String, Object> response = new HashMap<>();
@@ -157,5 +177,17 @@ public class ProfileController {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Map.of("error", "Failed to remove language"));
+    }
+
+    @PutMapping("/{userId}/languages/{id}")
+    public ResponseEntity<Map<String, Object>> updateLanguage(@RequestBody LanguageUserDto dto) {
+        boolean success = profileService.updateLanguage(dto);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Updated language successfully");
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to update language"));
     }
 }

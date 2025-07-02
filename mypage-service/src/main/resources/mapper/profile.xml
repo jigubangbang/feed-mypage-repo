@@ -17,6 +17,11 @@
         SET profile_image = #{profileImage}
         WHERE user_id = #{userId}
     </update>
+    <update id="updateBio" parameterType="com.jigubangbang.mypage_service.model.BioRequestDto">
+        UPDATE user
+        SET bio = #{bio}
+        WHERE user_id = #{userId}
+    </update>
     <select id="getCountryName" resultType="String" parameterType="String">
         SELECT name
         FROM country
@@ -66,13 +71,28 @@
         WHERE cf.user_id = #{userId}
         ORDER BY cf.country_rank ASC
     </select>
-    <select id="getUserLanguages" resultType="com.jigubangbang.mypage_service.model.LanguageDto" parameterType="String">
+    <select id="getLanguageList" resultType="com.jigubangbang.mypage_service.model.LanguageDto" parameterType="map">
+        SELECT
+            l.id,
+            l.name,
+            lu.user_id IS NOT NULL AS addStatus
+        FROM language l
+        LEFT JOIN language_user lu
+            ON l.id = lu.language_id AND lu.user_id = #{userId}
+        <where>
+            <if test="keyword != null and keyword != ''">
+                name LIKE CONCAT ('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY l.name ASC
+    </select>
+    <select id="getUserLanguages" resultType="com.jigubangbang.mypage_service.model.LanguageUserDto" parameterType="String">
         SELECT lu.id, l.name, lu.proficiency
         FROM language_user lu
         JOIN language l on l.id = lu.language_id
         WHERE lu.user_id = #{userId}
     </select>
-    <insert id="addLanguage" parameterType="map">
+    <insert id="addLanguage" parameterType="com.jigubangbang.mypage_service.model.LanguageUserDto">
         INSERT INTO language_user (user_id, language_id, proficiency)
         VALUES (#{userId}, #{languageId}, #{proficiency})
     </insert>
@@ -80,4 +100,9 @@
         DELETE FROM language_user
         WHERE id = #{id}
     </delete>
+    <update id="updateLanguage" parameterType="com.jigubangbang.mypage_service.model.LanguageUserDto">
+        UPDATE language_user
+        SET proficiency = #{proficiency}
+        WHERE id=#{id}
+    </update>
 </mapper>
