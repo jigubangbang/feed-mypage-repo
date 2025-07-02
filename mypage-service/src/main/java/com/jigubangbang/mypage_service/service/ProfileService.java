@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.jigubangbang.mypage_service.mapper.ProfileMapper;
 import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
+import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.LanguageUserDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
@@ -87,8 +88,16 @@ public class ProfileService {
         return profileMapper.unfollowUser(map) > 0;
     }
 
-    public List<CountryDto> getTopCountries(String userId) {
-        return profileMapper.getTopCountries(userId);
+    public List<CountryFavDto> getFavCountries(String userId) {
+        return profileMapper.getFavCountries(userId);
+    }
+
+    public boolean updateFavCountries(String userId, List<CountryFavDto> favCountries) {
+        profileMapper.deleteFavCountriesByUserId(userId);
+        if (favCountries != null && favCountries.size() > 0) {
+            return profileMapper.insertFavCountries(userId, favCountries) > 0;
+        }
+        return true;
     }
 
     public List<LanguageDto> getLanguageList(String userId, String keyword) {

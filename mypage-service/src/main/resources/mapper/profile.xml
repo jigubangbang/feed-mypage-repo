@@ -64,13 +64,23 @@
         WHERE follower_id = #{followerId}
         AND following_id = #{followingId}
     </delete>
-    <select id="getTopCountries" resultType="com.jigubangbang.mypage_service.model.CountryDto" parameterType="String">
-        SELECT c.id, c.name, cf.country_rank
+    <select id="getFavCountries" resultType="com.jigubangbang.mypage_service.model.CountryFavDto" parameterType="String">
+        SELECT cf.id, cf.country_id, c.name, cf.country_rank, cf.user_id
         FROM country_fav cf
         JOIN country c on cf.country_id = c.id
         WHERE cf.user_id = #{userId}
         ORDER BY cf.country_rank ASC
     </select>
+    <delete id="deleteFavCountriesByUserId" parameterType="string">
+        DELETE FROM country_fav WHERE user_id = #{userId}
+    </delete>
+    <insert id="insertFavCountries">
+        INSERT INTO country_fav (user_id, country_id, country_rank)
+        VALUES
+        <foreach collection="favCountries" item="country" separator=",">
+            (#{userId}, #{country.countryId}, #{country.countryRank})
+        </foreach>
+    </insert>
     <select id="getLanguageList" resultType="com.jigubangbang.mypage_service.model.LanguageDto" parameterType="map">
         SELECT
             l.id,

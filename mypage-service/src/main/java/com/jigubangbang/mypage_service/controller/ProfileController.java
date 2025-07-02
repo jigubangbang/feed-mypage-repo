@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
+import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.LanguageUserDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
@@ -123,13 +124,25 @@ public class ProfileController {
     }
 
     @GetMapping("/{userId}/favorites")
-    public ResponseEntity<Map<String, Object>> getTopCountries(@PathVariable String userId) {
-        List<CountryDto> countryList = profileService.getTopCountries(userId);
+    public ResponseEntity<Map<String, Object>> getFavCountries(@PathVariable String userId) {
+        List<CountryFavDto> countryList = profileService.getFavCountries(userId);
         Map<String, Object> response = new HashMap<>();
         response.put("totalItems", countryList.size());
         response.put("countries", countryList);
         
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{userId}/favorites")
+    public ResponseEntity<Map<String, Object>> updateFavCountries(@PathVariable String userId, @RequestBody List<CountryFavDto> favCountries) {
+        boolean success = profileService.updateFavCountries(userId, favCountries);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Updated list successfully");
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to update list"));
     }
 
     @GetMapping("/{userId}/languages/search")

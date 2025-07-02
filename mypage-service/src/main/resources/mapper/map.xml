@@ -9,12 +9,15 @@
             c.name,
             c.continent,
             cv.user_id IS NOT NULL AS visitStatus,
-            cw.user_id IS NOT NULL AS wishStatus
+            cw.user_id IS NOT NULL AS wishStatus,
+            cf.user_id IS NOT NULL as favStatus
         FROM country c
         LEFT JOIN country_visit cv
             ON c.id = cv.country_id AND cv.user_id = #{userId}
         LEFT JOIN country_wish cw
             ON c.id = cw.country_id AND cw.user_id = #{userId}
+        LEFT JOIN country_fav cf
+            ON c.id = cf.country_id AND cf.user_id = #{userId}
         <where>
             <if test="keyword != null and keyword != ''">
                 name LIKE CONCAT('%', #{keyword}, '%')

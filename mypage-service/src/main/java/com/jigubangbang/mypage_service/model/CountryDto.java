@@ -11,5 +11,5 @@ public class CountryDto {
     private String continent;
     private boolean visitStatus;
     private boolean wishStatus;
-    private String countryRank;
+    private boolean favStatus;
 }
