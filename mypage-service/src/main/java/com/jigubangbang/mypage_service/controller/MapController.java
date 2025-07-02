@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -202,5 +203,18 @@ public class MapController {
         response.put("posts", feedPosts);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{userId}/countries/settings")
+    public ResponseEntity<Map<String, Object>> changeMapColor(@PathVariable String userId, @RequestParam("color") String color) {
+        boolean success = mapService.changeMapColor(userId, color);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Color updated successfully");
+            response.put("color", color);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error",  "Failed to update map color"));
     }
 }

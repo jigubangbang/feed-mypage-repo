@@ -102,4 +102,9 @@
         WHERE country_id = #{countryId}
         AND user_id = #{userId}
     </select>
+    <update id="changeMapColor" parameterType="map">
+        UPDATE user
+        SET map_color = #{mapColor}
+        WHERE user_id = #{userId}
+    </update>
 </mapper>

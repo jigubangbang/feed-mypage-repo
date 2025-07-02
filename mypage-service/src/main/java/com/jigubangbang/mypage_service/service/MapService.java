@@ -89,4 +89,11 @@ public class MapService {
         map.put("countryId", countryId);
         return mapMapper.getCountryFeed(map);
     }
+
+    public boolean changeMapColor(String userId, String mapColor) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("mapColor", mapColor);
+        return mapMapper.changeMapColor(map) > 0;
+    }
 }

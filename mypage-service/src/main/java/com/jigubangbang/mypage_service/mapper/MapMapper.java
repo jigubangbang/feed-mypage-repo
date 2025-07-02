@@ -27,4 +27,5 @@ public interface MapMapper {
     public int removeWishlistCountry(Map<String, Object> map);
     public List<CityDto> getCityList(String countryId);
     public List<FeedPostDto> getCountryFeed(Map<String, Object> map);
+    public int changeMapColor(Map<String, Object> map);
 }
