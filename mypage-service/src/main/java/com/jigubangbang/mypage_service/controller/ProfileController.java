@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.mypage_service.model.BioRequestDto;
-import com.jigubangbang.mypage_service.model.CountryDto;
 import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.LanguageUserDto;

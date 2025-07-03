@@ -1,7 +1,5 @@
 package com.jigubangbang.mypage_service.model;
 
-import java.sql.Timestamp;
-
 import lombok.Getter;
 import lombok.Setter;
 
