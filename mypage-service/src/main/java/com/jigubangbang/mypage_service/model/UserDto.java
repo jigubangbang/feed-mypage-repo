@@ -9,7 +9,7 @@ public class UserDto {
     private String userId;
     private String nickname;
     private boolean isPremium;
-    private String profile_image;
+    private String profileImage;
 
     private int followerCount;
     private int followingCount;
