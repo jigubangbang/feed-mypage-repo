@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jigubangbang.mypage_service.mapper.ProfileMapper;
+import com.jigubangbang.mypage_service.model.BadgeDto;
+import com.jigubangbang.mypage_service.model.BadgeUserDto;
 import com.jigubangbang.mypage_service.model.BioRequestDto;
-import com.jigubangbang.mypage_service.model.CountryDto;
 import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.LanguageUserDto;
@@ -37,6 +38,10 @@ public class ProfileService {
         return profileDto;
     }
 
+    public String getCountryName(String id) {
+        return profileMapper.getCountryName(id);
+    }
+
     public boolean updateProfileImage(String userId, String profileImage) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
@@ -46,6 +51,10 @@ public class ProfileService {
 
     public boolean updateBio(BioRequestDto dto) {
         return profileMapper.updateBio(dto) > 0;
+    }
+
+    public boolean updateNationality(ProfileDto dto) {
+        return profileMapper.updateNationality(dto) > 0;
     }
 
     public boolean updateTravelStatus(String userId, String travelStatus) {
@@ -121,5 +130,20 @@ public class ProfileService {
 
     public boolean updateLanguage(LanguageUserDto dto) {
         return profileMapper.updateLanguage(dto) > 0;
+    }
+
+    public int getIdByLanguageUser(String userId, int languageId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("languageId", languageId);
+        return profileMapper.getIdByLanguageUser(map);
+    }
+
+    public List<BadgeDto> getUserBadges(String userId) {
+        return profileMapper.getUserBadges(userId);
+    }
+
+    public List<BadgeUserDto> getBadgeDetail(int id) {
+        return profileMapper.getBadgeDetail(id);
     }
 }

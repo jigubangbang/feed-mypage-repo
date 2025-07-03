@@ -22,6 +22,11 @@
         SET bio = #{bio}
         WHERE user_id = #{userId}
     </update>
+    <update id="updateNationality" parameterType="com.jigubangbang.mypage_service.model.ProfileDto">
+        UPDATE user
+        SET nationality = #{nationality}
+        WHERE user_id = #{userId}
+    </update>
     <select id="getCountryName" resultType="String" parameterType="String">
         SELECT name
         FROM country
@@ -97,10 +102,15 @@
         ORDER BY l.name ASC
     </select>
     <select id="getUserLanguages" resultType="com.jigubangbang.mypage_service.model.LanguageUserDto" parameterType="String">
-        SELECT lu.id, l.name, lu.proficiency
+        SELECT lu.id, lu.language_id, l.name, lu.proficiency
         FROM language_user lu
         JOIN language l on l.id = lu.language_id
         WHERE lu.user_id = #{userId}
+    </select>
+    <select id="getIdByLanguageUser" parameterType="map">
+        SELECT id FROM language_user
+        WHERE user_id = #{userId}
+        AND language_id = #{languageId}
     </select>
     <insert id="addLanguage" parameterType="com.jigubangbang.mypage_service.model.LanguageUserDto">
         INSERT INTO language_user (user_id, language_id, proficiency)
@@ -115,4 +125,27 @@
         SET proficiency = #{proficiency}
         WHERE id=#{id}
     </update>
+    <select id="getUserBadges" parameterType="String" resultType="com.jigubangbang.mypage_service.model.BadgeDto">
+        SELECT
+            b.id,
+            b.icon,
+            bu.user_id IS NOT NULL AS acquiredStatus
+        FROM badge b
+        LEFT JOIN badge_user bu
+            ON b.id = bu.badge_id AND bu.user_id = #{userId}
+    </select>
+    <select id="getBadgeDetail" parameterType="int" resultType="com.jigubangbang.mypage_service.model.BadgeUserDto">
+        SELECT
+            b.id,
+            b.kor_title,
+            b.description,
+            b.icon,
+            b.difficulty,
+            bu.awarded_at,
+            bu.is_displayed
+        FROM badge b
+        LEFT JOIN badge_user bu
+            ON b.id = bu.badge_id
+        WHERE id = #{id}
+    </select>
 </mapper>

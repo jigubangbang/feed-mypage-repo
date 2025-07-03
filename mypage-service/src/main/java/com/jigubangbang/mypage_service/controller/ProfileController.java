@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,10 +39,8 @@ public class ProfileController {
     @Resource
     private S3Service s3Service;
 
-    // TODO : replace all sessionUserId ("bbb") w/ real logged in user
     @GetMapping("/{userId}")
-    public ProfileDto getProfile(@PathVariable String userId) {
-        String sessionUserId = "bbb"; // TODO: replace w/ session user
+    public ProfileDto getProfile(@PathVariable String userId, @RequestHeader("User-Id") String sessionUserId) {
         ProfileDto profileDto = profileService.getProfileDto(userId);
         
         boolean followStatus = profileService.getFollowStatus(sessionUserId, userId);
@@ -78,6 +77,21 @@ public class ProfileController {
             .body(Map.of("error", "Failed to update bio"));
     }
 
+    @PutMapping("/{userId}/nationality")
+    public ResponseEntity<Map<String, Object>> updateNationality(@RequestBody ProfileDto dto) {
+        boolean success = profileService.updateNationality(dto);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Nationality updated successfully");
+            String nationality = dto.getNationality();
+            response.put("nationality", nationality);
+            response.put("nationalityName", profileService.getCountryName(nationality));
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to updated nationality"));
+    }
+
     @PutMapping("/{userId}/travel-status")
     public ResponseEntity<Map<String, Object>> updateTravelStatus(@PathVariable String userId,
             @RequestParam("status") String travelStatus) {
@@ -94,8 +108,7 @@ public class ProfileController {
     }
 
     @PostMapping("/{userId}/network")
-    public ResponseEntity<Map<String, Object>> followUser(@PathVariable String userId) {
-        String sessionUserId = "bbb"; // TODO: replace w/ session user
+    public ResponseEntity<Map<String, Object>> followUser(@PathVariable String userId, @RequestHeader("User-Id") String sessionUserId) {
         boolean success = profileService.followUser(sessionUserId, userId);
 
         if (success) {
@@ -109,8 +122,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/{userId}/network")
-    public ResponseEntity<Map<String, Object>> unfollowUser(@PathVariable String userId) {
-        String sessionUserId = "bbb"; // TODO: replace w/ session user
+    public ResponseEntity<Map<String, Object>> unfollowUser(@PathVariable String userId, @RequestHeader("User-Id") String sessionUserId) {
         boolean success = profileService.unfollowUser(sessionUserId, userId);
 
         if (success) {
@@ -166,12 +178,15 @@ public class ProfileController {
     }
 
     @PostMapping("/{userId}/languages")
-    public ResponseEntity<Map<String, Object>> addLanguage(@RequestBody LanguageUserDto dto) {
+    public ResponseEntity<Map<String, Object>> addLanguage(@PathVariable String userId, @RequestBody LanguageUserDto dto) {
         boolean success = profileService.addLanguage(dto);
 
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Language added successfully");
+            int languageId = dto.getLanguageId();
+            int id = profileService.getIdByLanguageUser(userId, languageId);
+            response.put("id", id);
             return ResponseEntity.ok(response); 
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
