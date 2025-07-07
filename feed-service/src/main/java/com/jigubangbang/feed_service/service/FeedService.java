@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jigubangbang.feed_service.mapper.FeedMapper;
+import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.PostBookmarkDto;
 import com.jigubangbang.feed_service.model.PostDto;
 import com.jigubangbang.feed_service.model.PostLikeDto;
@@ -41,6 +42,14 @@ public class FeedService {
 
     public boolean addPost(PostDto dto) {
         return feedMapper.addPost(dto) > 0;
+    }
+
+    public boolean addVisitCountry(PostDto dto) {
+        return feedMapper.addVisitCountry(dto) > 0;
+    }
+
+    public boolean addPostImage(FeedImageDto dto) {
+        return feedMapper.addPostImage(dto) > 0;
     }
 
     public boolean deletePost(int id) {
