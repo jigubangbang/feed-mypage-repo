@@ -3,9 +3,25 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jigubangbang.feed_service.mapper.FeedMapper">
-    <select id="getUserPosts" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="String">
-        SELECT * FROM feed_post
-        WHERE user_id = #{userId}
+    <select id="getUserPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
+        SELECT 
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.user_id = #{userId}
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        ORDER BY fp.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
     <select id="getPostDetail" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="int">
         SELECT * FROM feed_post
@@ -21,16 +37,34 @@
         WHERE user_id = #{userId}
         AND feed_id = #{feedId}
     </select>
-    <insert id="addPost" parameterType="com.jigubangbang.feed_service.model.PostDto">
-        INSERT INTO feed_post (user_id, country_id, city_id, title, start_date, end_date)
+    <insert id="addPost" parameterType="com.jigubangbang.feed_service.model.PostDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO feed_post (user_id, country_id, city_id, title, start_date, end_date, public_status)
         VALUES (
             #{userId},
             #{countryId},
             #{cityId},
             #{title}, 
             COALESCE (#{startDate}, CURRENT_TIMESTAMP),
-            COALESCE (#{endDate}, CURRENT_TIMESTAMP)
+            COALESCE (#{endDate}, CURRENT_TIMESTAMP),
+            #{publicStatus}
         );
+    </insert>
+    <insert id="addVisitCountry" parameterType="com.jigubangbang.feed_service.model.PostDto">
+        INSERT INTO country_visit (user_id, country_id, start_date, end_date)
+        SELECT * FROM (
+            SELECT
+                #{userId},
+                #{countryId},
+                COALESCE(#{startDate}, CURRENT_TIMESTAMP) AS start_date,
+                COALESCE(#{endDate}, CURRENT_TIMESTAMP) AS end_date
+        ) AS tmp
+        WHERE NOT EXISTS (
+            SELECT 1 FROM country_visit WHERE user_id = #{userId} AND country_id = #{countryId}
+        )
+    </insert>
+    <insert id="addPostImage" parameterType="com.jigubangbang.feed_service.model.FeedImageDto">
+        INSERT INTO feed_image (feed_id, photo_url, display_order)
+        VALUES (#{feedId}, #{photoUrl}, #{displayOrder})
     </insert>
     <delete id="deletePost" parameterType="int">
         DELETE FROM feed_post
