@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jigubangbang.feed_service.mapper.FeedMapper;
+import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.PostBookmarkDto;
 import com.jigubangbang.feed_service.model.PostDto;
@@ -18,8 +19,12 @@ public class FeedService {
     @Autowired
     private FeedMapper feedMapper;
 
-    public List<PostDto> getUserPosts(String userId) {
-        return feedMapper.getUserPosts(userId);
+    public List<FeedDto> getUserPosts(String userId, int pageSize, int offset) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("pageSize", pageSize);
+        map.put("offset", offset);
+        return feedMapper.getUserPosts(map);
     }
 
     public PostDto getPostDetail(int id) {
