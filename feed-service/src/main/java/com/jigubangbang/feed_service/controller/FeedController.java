@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jigubangbang.feed_service.chat_service.NotificationServiceClient;
 import com.jigubangbang.feed_service.model.CommentDto;
 import com.jigubangbang.feed_service.model.CommentLikeDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.PostDto;
+import com.jigubangbang.feed_service.model.chat_service.FeedNotificationRequestDto;
 import com.jigubangbang.feed_service.service.CommentService;
 import com.jigubangbang.feed_service.service.FeedService;
 import com.jigubangbang.feed_service.service.S3Service;
@@ -36,6 +39,9 @@ public class FeedController {
 
     @Resource
     private CommentService commentService;
+
+    @Autowired
+    private NotificationServiceClient notificationClient;
 
     @Resource
     private S3Service s3Service;
@@ -197,6 +203,25 @@ public class FeedController {
     public ResponseEntity<Map<String, Object>> likePost(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {
         boolean success = feedService.likePost(userId, feedId);
         if (success) {
+
+            // 예시 ============================================================
+            try {
+                FeedNotificationRequestDto request = FeedNotificationRequestDto.builder()
+                    .authorId("aaa")
+                    .feedId(feedId)
+                    .relatedUrl("/")
+                    .senderId(userId)
+                    .senderProfileImage(null)
+                    .build();   // 여기서 builder 안주고 함수 간단히 적어서 서비스로 따로 빼도 됨
+
+                notificationClient.createFeedLikeNotification(request);
+                System.out.println("[FeedController] 피드 좋아요 알림 발송: " + userId + " -> aaa ");
+                } catch (Exception e) {
+                System.out.println("[FeedController] 알림 발송 실패: " + e.getMessage());
+                // 알림 실패해도 좋아요는 성공으로 처리
+            }
+            // ================================================================
+
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Feed liked successfully");
             return ResponseEntity.ok(response);
