@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.feed_service.mapper.CommentMapper">
+    <select id="getComments" parameterType="map" resultType="com.jigubangbang.feed_service.model.CommentDto">
+        SELECT 
+            fc.id, fc.feed_id, fc.user_id, fc.parent_comment_id,
+            fc.content, fc.created_at, fc.blind_status,
+            (
+                SELECT 
+                    CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END
+                FROM feed_comment_like fcl
+                WHERE fcl.comment_id = fc.id
+                AND fcl.user_id = #{userId}
+            ) AS like_status
+        FROM feed_comment fc
+        WHERE fc.feed_id = #{feedId}
+    </select>
+    <insert id="addComment" parameterType="com.jigubangbang.feed_service.model.CommentDto">
+        INSERT INTO feed_comment (feed_id, user_id, parent_comment_id, content)
+        VALUES (#{feedId}, #{userId}, #{parentCommentId}, #{content})
+    </insert>
+    <delete id="deleteComment" parameterType="int">
+        DELETE FROM feed_comment
+        WHERE id=#{id}
+        OR parent_comment_id=#{id}
+    </delete>
+    <insert id="likeComment" parameterType="com.jigubangbang.feed_service.model.CommentLikeDto">
+        INSERT INTO feed_comment_like (comment_id, user_id)
+        VALUES (#{commentId}, #{userId})
+    </insert>
+    <delete id="unlikeComment" parameterType="map">
+        DELETE FROM feed_comment_like
+        WHERE comment_id = #{commentId}
+        AND user_id = #{userId}
+    </delete>
+</mapper>

@@ -12,6 +12,7 @@ public class ProfileDto {
     private String nickname;
     private String profileImage;
     private Timestamp createdAt;
+    private boolean isPremium;
     private String nationality;
     private String bio;
     private String travelStyleId;
