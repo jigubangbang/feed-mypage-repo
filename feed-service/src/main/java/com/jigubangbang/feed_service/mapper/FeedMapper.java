@@ -7,22 +7,21 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
-import com.jigubangbang.feed_service.model.PostBookmarkDto;
 import com.jigubangbang.feed_service.model.PostDto;
-import com.jigubangbang.feed_service.model.PostLikeDto;
 
 @Mapper
 public interface FeedMapper {
     public List<FeedDto> getUserPosts(Map<String, Object> map);
     public PostDto getPostDetail(int id);
+    public List<FeedImageDto> getPostImages(int feedId);
     public int getPostLikeStatus(Map<String, Object> map);
     public int getPostBookmarkStatus(Map<String, Object> map);
     public int addPost(PostDto dto);
     public int addVisitCountry(PostDto dto);
     public int addPostImage(FeedImageDto dto);
     public int deletePost(int id);
-    public int likePost(PostLikeDto dto);
+    public int likePost(Map<String, Object> map);
     public int unlikePost(Map<String, Object> map);
-    public int bookmarkPost(PostBookmarkDto dto);
+    public int bookmarkPost(Map<String, Object> map);
     public int removeBookmarkPost(Map<String, Object> map);
 }

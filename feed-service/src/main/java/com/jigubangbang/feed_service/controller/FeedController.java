@@ -20,12 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jigubangbang.feed_service.model.CommentDto;
 import com.jigubangbang.feed_service.model.CommentLikeDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
-import com.jigubangbang.feed_service.model.PostBookmarkDto;
 import com.jigubangbang.feed_service.model.PostDto;
-import com.jigubangbang.feed_service.model.PostLikeDto;
 import com.jigubangbang.feed_service.service.CommentService;
 import com.jigubangbang.feed_service.service.FeedService;
 import com.jigubangbang.feed_service.service.S3Service;
+import com.jigubangbang.feed_service.util.DateUtils;
 
 import jakarta.annotation.Resource;
 
@@ -42,10 +41,15 @@ public class FeedController {
     private S3Service s3Service;
 
     @GetMapping("/{feedId}")
-    public ResponseEntity<Map<String, Object>> getPostDetail(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {
+    public ResponseEntity<Map<String, Object>> getPostDetail(@PathVariable int feedId) {
+        // TODO
+        String userId = "shyunam";
         PostDto post = feedService.getPostDetail(feedId);
         post.setLikeStatus(feedService.getPostLikeStatus(userId, feedId));
         post.setBookmarkStatus(feedService.getPostBookmarkStatus(userId, feedId));
+        post.setImages(feedService.getPostImages(feedId));
+        post.setFormattedStartDate(DateUtils.formatToKoreanDate(post.getStartDate()));
+        post.setFormattedEndDate(DateUtils.formatToKoreanDate(post.getEndDate()));
         Map<String, Object> response = new HashMap<>();
         response.put("post", post);
 
@@ -108,11 +112,33 @@ public class FeedController {
     }
 
     @GetMapping("/{feedId}/comments")
-    public ResponseEntity<Map<String, Object>> getComments(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {
-        List<CommentDto> comments = commentService.getComments(userId, feedId);
+    public ResponseEntity<Map<String, Object>> getComments(
+            @PathVariable int feedId,
+            @RequestParam("limit") int limit,
+            @RequestParam("offset") int offset) {
+        // TODO
+        String userId = "shyunam";
+        List<CommentDto> comments = commentService.getComments(userId, feedId, limit, offset);
 
         Map<String, Object> response = new HashMap<>();
         response.put("feedId", feedId);
+        response.put("totalItems", comments.size());
+        response.put("comments", comments);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{feedId}/comments/{commentId}/replies")
+    public ResponseEntity<Map<String, Object>> getReplies(
+            @PathVariable int commentId,
+            @RequestParam("limit") int limit,
+            @RequestParam("offset") int offset) {
+        // TODO
+        String userId = "shyunam";
+        List<CommentDto> comments = commentService.getReplies(userId, commentId, limit, offset);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("commentId", commentId);
         response.put("totalItems", comments.size());
         response.put("comments", comments);
         
@@ -168,8 +194,8 @@ public class FeedController {
     }
 
     @PostMapping("/{feedId}/like")
-    public ResponseEntity<Map<String, Object>> likePost(@RequestBody PostLikeDto dto) {
-        boolean success = feedService.likePost(dto);
+    public ResponseEntity<Map<String, Object>> likePost(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {
+        boolean success = feedService.likePost(userId, feedId);
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Feed liked successfully");
@@ -192,8 +218,8 @@ public class FeedController {
     }
 
     @PostMapping("/{feedId}/bookmark")
-    public ResponseEntity<Map<String, Object>> bookmarkPost(@RequestBody PostBookmarkDto dto) {
-        boolean success = feedService.bookmarkPost(dto);
+    public ResponseEntity<Map<String, Object>> bookmarkPost(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {
+        boolean success = feedService.bookmarkPost(userId, feedId);
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Bookmark created successfully");

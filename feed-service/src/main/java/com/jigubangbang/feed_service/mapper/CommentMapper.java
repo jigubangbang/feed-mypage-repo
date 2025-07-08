@@ -11,6 +11,7 @@ import com.jigubangbang.feed_service.model.CommentLikeDto;
 @Mapper
 public interface CommentMapper {
     public List<CommentDto> getComments(Map<String, Object> map);
+    public List<CommentDto> getReplies(Map<String, Object> map);
     public int addComment(CommentDto dto);
     public int deleteComment(int id);
     public int likeComment(CommentLikeDto dto);

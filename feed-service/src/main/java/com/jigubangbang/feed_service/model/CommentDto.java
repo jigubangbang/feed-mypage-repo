@@ -17,4 +17,5 @@ public class CommentDto {
     private String blindStatus;
 
     private boolean likeStatus;
+    private int likeCount;
 }
