@@ -16,12 +16,23 @@ public class CommentService {
     @Autowired
     private CommentMapper commentMapper;
 
-    public List<CommentDto> getComments(String userId, int feedId) {
+    public List<CommentDto> getComments(String userId, int feedId, int limit, int offset) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("feedId", feedId);
+        map.put("limit", limit);
+        map.put("offset", offset);
         return commentMapper.getComments(map);
     }
+
+    public List<CommentDto> getReplies (String userId, int commentId, int limit, int offset) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("commentId", commentId);
+        map.put("limit", limit);
+        map.put("offset", offset);
+        return commentMapper.getComments(map);
+    } 
 
     public boolean addComment(CommentDto dto) {
         return commentMapper.addComment(dto) > 0;

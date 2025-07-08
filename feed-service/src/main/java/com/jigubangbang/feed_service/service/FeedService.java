@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import com.jigubangbang.feed_service.mapper.FeedMapper;
 import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
-import com.jigubangbang.feed_service.model.PostBookmarkDto;
 import com.jigubangbang.feed_service.model.PostDto;
-import com.jigubangbang.feed_service.model.PostLikeDto;
 
 @Service
 public class FeedService {
@@ -29,6 +27,10 @@ public class FeedService {
 
     public PostDto getPostDetail(int id) {
         return feedMapper.getPostDetail(id);
+    }
+
+    public List<FeedImageDto> getPostImages(int feedId) {
+        return feedMapper.getPostImages(feedId);
     }
 
     public boolean getPostLikeStatus(String userId, int feedId) {
@@ -61,8 +63,11 @@ public class FeedService {
         return feedMapper.deletePost(id) > 0;
     }
 
-    public boolean likePost(PostLikeDto dto) {
-        return feedMapper.likePost(dto) > 0;
+    public boolean likePost(String userId, int feedId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("feedId", feedId);
+        return feedMapper.likePost(map) > 0;
     }
 
     public boolean unlikePost(String userId, int feedId) {
@@ -72,8 +77,11 @@ public class FeedService {
         return feedMapper.unlikePost(map) > 0;
     }
 
-    public boolean bookmarkPost(PostBookmarkDto dto) {
-        return feedMapper.bookmarkPost(dto) > 0;
+    public boolean bookmarkPost(String userId, int feedId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("feedId", feedId);
+        return feedMapper.bookmarkPost(map) > 0;
     }
 
     public boolean removeBookmarkPost(String userId, int feedId) {
