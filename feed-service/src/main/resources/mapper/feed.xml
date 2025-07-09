@@ -34,7 +34,9 @@
             fp.end_date,
             fp.public_status,
             u.nickname,
-            u.profile_image
+            u.profile_image,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
         FROM feed_post fp
         LEFT JOIN user u
             ON fp.user_id = u.user_id
