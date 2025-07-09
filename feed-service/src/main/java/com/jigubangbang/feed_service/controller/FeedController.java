@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.feed_service.chat_service.NotificationServiceClient;
 import com.jigubangbang.feed_service.model.CommentDto;
-import com.jigubangbang.feed_service.model.CommentLikeDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.PostDto;
 import com.jigubangbang.feed_service.model.chat_service.FeedNotificationRequestDto;
@@ -47,9 +46,7 @@ public class FeedController {
     private S3Service s3Service;
 
     @GetMapping("/{feedId}")
-    public ResponseEntity<Map<String, Object>> getPostDetail(@PathVariable int feedId) {
-        // TODO
-        String userId = "shyunam";
+    public ResponseEntity<Map<String, Object>> getPostDetail(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {
         PostDto post = feedService.getPostDetail(feedId);
         post.setLikeStatus(feedService.getPostLikeStatus(userId, feedId));
         post.setBookmarkStatus(feedService.getPostBookmarkStatus(userId, feedId));
@@ -119,11 +116,10 @@ public class FeedController {
 
     @GetMapping("/{feedId}/comments")
     public ResponseEntity<Map<String, Object>> getComments(
+            @RequestHeader("User-Id") String userId,
             @PathVariable int feedId,
             @RequestParam("limit") int limit,
             @RequestParam("offset") int offset) {
-        // TODO
-        String userId = "shyunam";
         List<CommentDto> comments = commentService.getComments(userId, feedId, limit, offset);
 
         Map<String, Object> response = new HashMap<>();
@@ -136,12 +132,9 @@ public class FeedController {
 
     @GetMapping("/{feedId}/comments/{commentId}/replies")
     public ResponseEntity<Map<String, Object>> getReplies(
-            @PathVariable int commentId,
-            @RequestParam("limit") int limit,
-            @RequestParam("offset") int offset) {
-        // TODO
-        String userId = "shyunam";
-        List<CommentDto> comments = commentService.getReplies(userId, commentId, limit, offset);
+            @RequestHeader("User-Id") String userId,
+            @PathVariable int commentId) {
+        List<CommentDto> comments = commentService.getReplies(userId, commentId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("commentId", commentId);
@@ -152,7 +145,10 @@ public class FeedController {
     }
 
     @PostMapping("/{feedId}/comments")
-    public ResponseEntity<Map<String, Object>> addComment(@RequestBody CommentDto dto) {
+    public ResponseEntity<Map<String, Object>> addComment(
+            @RequestHeader("User-Id") String userId,
+            @RequestBody CommentDto dto) {
+        dto.setUserId(userId);
         boolean success = commentService.addComment(dto);
         if (success) {
             Map<String, Object> response = new HashMap<>();
@@ -176,8 +172,8 @@ public class FeedController {
     }
 
     @PostMapping("/{feedId}/comments/{commentId}/like")
-    public ResponseEntity<Map<String, Object>> likeComment(@RequestBody CommentLikeDto dto) {
-        boolean success = commentService.likeComment(dto);
+    public ResponseEntity<Map<String, Object>> likeComment(@RequestHeader("User-Id") String userId, @PathVariable int commentId) {
+        boolean success = commentService.likeComment(userId, commentId);
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Comment liked successfully");

@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.jigubangbang.feed_service.model.CommentDto;
-import com.jigubangbang.feed_service.model.CommentLikeDto;
 
 @Mapper
 public interface CommentMapper {
@@ -14,6 +13,6 @@ public interface CommentMapper {
     public List<CommentDto> getReplies(Map<String, Object> map);
     public int addComment(CommentDto dto);
     public int deleteComment(int id);
-    public int likeComment(CommentLikeDto dto);
+    public int likeComment(Map<String, Object> map);
     public int unlikeComment(Map<String, Object> map);
 }

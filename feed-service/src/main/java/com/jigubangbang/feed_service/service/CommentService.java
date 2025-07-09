@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.jigubangbang.feed_service.mapper.CommentMapper;
 import com.jigubangbang.feed_service.model.CommentDto;
-import com.jigubangbang.feed_service.model.CommentLikeDto;
 
 @Service
 public class CommentService {
@@ -25,13 +24,11 @@ public class CommentService {
         return commentMapper.getComments(map);
     }
 
-    public List<CommentDto> getReplies (String userId, int commentId, int limit, int offset) {
+    public List<CommentDto> getReplies (String userId, int commentId) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("commentId", commentId);
-        map.put("limit", limit);
-        map.put("offset", offset);
-        return commentMapper.getComments(map);
+        return commentMapper.getReplies(map);
     } 
 
     public boolean addComment(CommentDto dto) {
@@ -42,8 +39,11 @@ public class CommentService {
         return commentMapper.deleteComment(id) > 0;
     }
 
-    public boolean likeComment(CommentLikeDto dto) {
-        return commentMapper.likeComment(dto) > 0;
+    public boolean likeComment(String userId, int commentId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("commentId", commentId);
+        return commentMapper.likeComment(map) > 0;
     }
 
     public boolean unlikeComment(String userId, int commentId) {

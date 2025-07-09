@@ -28,5 +28,8 @@ public class PostDto {
     private String formattedStartDate;
     private String formattedEndDate;
 
+    private int likeCount;
+    private int commentCount;
+
     private List<FeedImageDto> images;
 }
