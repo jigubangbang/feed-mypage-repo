@@ -46,6 +46,10 @@
             ON ci.id = fp.city_id
         WHERE fp.id = #{id}
     </select>
+    <select id="getPostUserById" resultType="String" parameterType="int">
+        SELECT user_id FROM feed_post
+        WHERE id = #{id}
+    </select> 
     <select id="getPostImages" resultType="com.jigubangbang.feed_service.model.FeedImageDto" parameterType="int">
         SELECT * FROM feed_image
         WHERE feed_id = #{feedId}

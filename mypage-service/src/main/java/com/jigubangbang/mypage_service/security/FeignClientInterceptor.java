@@ -1,4 +1,4 @@
-package com.jigubangbang.feed_service.security;
+package com.jigubangbang.mypage_service.security;
 
 
 import org.slf4j.Logger;

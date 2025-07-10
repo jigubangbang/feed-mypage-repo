@@ -27,6 +27,7 @@ import com.jigubangbang.feed_service.model.chat_service.FeedNotificationRequestD
 import com.jigubangbang.feed_service.service.CommentService;
 import com.jigubangbang.feed_service.service.FeedService;
 import com.jigubangbang.feed_service.service.S3Service;
+import com.jigubangbang.feed_service.service.UserService;
 import com.jigubangbang.feed_service.util.DateUtils;
 
 import jakarta.annotation.Resource;
@@ -39,6 +40,9 @@ public class FeedController {
 
     @Resource
     private CommentService commentService;
+
+    @Resource
+    private UserService userService;
 
     @Autowired
     private NotificationServiceClient notificationClient;
@@ -117,7 +121,6 @@ public class FeedController {
 
     @PutMapping("/{feedId}")
     public ResponseEntity<Map<String, Object>> updatePost(@RequestBody PostDto dto) {
-        System.out.println("UPDATING POST _________ title: " + dto.getTitle());
         boolean success = feedService.updatePost(dto);
         if (success) {
             Map<String, Object> response = new HashMap<>();
@@ -177,6 +180,24 @@ public class FeedController {
         dto.setUserId(userId);
         boolean success = commentService.addComment(dto);
         if (success) {
+            try {
+                int feedId = dto.getFeedId();
+                String authorId = feedService.getPostUserById(feedId);
+                String senderProfileImage = userService.getUserProfileById(userId);
+                FeedNotificationRequestDto request = FeedNotificationRequestDto.builder()
+                    .authorId(authorId)
+                    .feedId(feedId)
+                    .relatedUrl("/feed/" + feedId)
+                    .senderId(userId)
+                    .senderProfileImage(senderProfileImage)
+                    .build();
+
+                System.out.println("[FeedController] 피드 댓글 알림 발송: " + userId + "->" + authorId);
+                notificationClient.createFeedCommentNotification(request);
+            } catch (Exception e) {
+                System.out.println("[FeedController] 댓글 알림 발송 실패: " + e.getMessage());
+            }
+
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Comment created successfully");
             CommentDto comment = commentService.getCommentById(dto.getId());
@@ -226,25 +247,24 @@ public class FeedController {
     @PostMapping("/{feedId}/like")
     public ResponseEntity<Map<String, Object>> likePost(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {
         boolean success = feedService.likePost(userId, feedId);
-        if (success) {
 
-            // 예시 ============================================================
+        if (success) {
             try {
+                String authorId = feedService.getPostUserById(feedId);
+                String senderProfileImage = userService.getUserProfileById(userId);
                 FeedNotificationRequestDto request = FeedNotificationRequestDto.builder()
-                    .authorId("aaa")
+                    .authorId(authorId)
                     .feedId(feedId)
-                    .relatedUrl("/")
+                    .relatedUrl("/feed/" + feedId)
                     .senderId(userId)
-                    .senderProfileImage(null)
-                    .build();   // 여기서 builder 안주고 함수 간단히 적어서 서비스로 따로 빼도 됨
+                    .senderProfileImage(senderProfileImage)
+                    .build();
 
                 notificationClient.createFeedLikeNotification(request);
-                System.out.println("[FeedController] 피드 좋아요 알림 발송: " + userId + " -> aaa ");
-                } catch (Exception e) {
+                System.out.println("[FeedController] 피드 좋아요 알림 발송: " + userId + "->" + authorId);
+            } catch (Exception e) {
                 System.out.println("[FeedController] 알림 발송 실패: " + e.getMessage());
-                // 알림 실패해도 좋아요는 성공으로 처리
             }
-            // ================================================================
 
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Feed liked successfully");

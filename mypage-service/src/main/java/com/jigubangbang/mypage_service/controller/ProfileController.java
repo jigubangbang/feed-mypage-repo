@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,11 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jigubangbang.mypage_service.chat_service.NotificationServiceClient;
 import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
 import com.jigubangbang.mypage_service.model.LanguageUserDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
+import com.jigubangbang.mypage_service.model.chat_service.FeedNotificationRequestDto;
 import com.jigubangbang.mypage_service.service.ProfileService;
 import com.jigubangbang.mypage_service.service.S3Service;
 
@@ -37,6 +40,9 @@ public class ProfileController {
 
     @Resource
     private S3Service s3Service;
+
+    @Autowired
+    private NotificationServiceClient notificationClient;
 
     @GetMapping("/{userId}")
     public ProfileDto getProfile(@PathVariable String userId, @RequestHeader("User-Id") String sessionUserId) {
@@ -111,6 +117,21 @@ public class ProfileController {
         boolean success = profileService.followUser(sessionUserId, userId);
 
         if (success) {
+            try {
+                String profileImage = profileService.getProfileDto(sessionUserId).getProfileImage();
+                FeedNotificationRequestDto request = FeedNotificationRequestDto.builder()
+                    .authorId(userId)
+                    .relatedUrl("/profile/" + sessionUserId)
+                    .senderId(sessionUserId)
+                    .senderProfileImage(profileImage)
+                    .build();
+
+                System.out.println("[ProfileController] 팔로우 알림 발송: " + sessionUserId + "->" + userId);
+                notificationClient.createFollowNotification(request);
+            } catch (Exception e) {
+                System.out.println("[ProfileController] 알림 발송 실패: " + e.getMessage());
+            }
+
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Followed successfully");
             return ResponseEntity.ok(response);

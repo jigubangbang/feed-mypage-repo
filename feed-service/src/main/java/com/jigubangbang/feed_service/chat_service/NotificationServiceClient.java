@@ -11,18 +11,11 @@ import com.jigubangbang.feed_service.model.chat_service.FeedNotificationRequestD
 
 @FeignClient( name="chat-service", configuration = NotificationServiceClientConfig.class, fallback = NotificationServiceClientFallback.class)
 public interface NotificationServiceClient {
-
-    // 팔로우 알림
-    @PostMapping("/feed/follow")
-    public ResponseEntity<Map<String, Object>> createFollowNotification(@RequestBody FeedNotificationRequestDto request);
-    
     // 피드 좋아요 알림
-    @PostMapping("/feed/like")
+    @PostMapping("/notifications/feed/like")
     public ResponseEntity<Map<String, Object>> createFeedLikeNotification(@RequestBody FeedNotificationRequestDto request);
 
     // 피드 댓글 알림
-    @PostMapping("/feed/comment")
+    @PostMapping("/notifications/feed/comment")
     public ResponseEntity<Map<String, Object>> createFeedCommentNotification(@RequestBody FeedNotificationRequestDto request);
-
-    // 피드 게시글 알림 (승현 원할 시)
 }

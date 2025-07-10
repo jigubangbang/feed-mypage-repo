@@ -13,6 +13,7 @@ import com.jigubangbang.feed_service.model.PostDto;
 public interface FeedMapper {
     public List<FeedDto> getUserPosts(Map<String, Object> map);
     public PostDto getPostDetail(int id);
+    public String getPostUserById(int id);
     public List<FeedImageDto> getPostImages(int feedId);
     public int getPostLikeStatus(Map<String, Object> map);
     public int getPostBookmarkStatus(Map<String, Object> map);

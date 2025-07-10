@@ -29,6 +29,10 @@ public class FeedService {
         return feedMapper.getPostDetail(id);
     }
 
+    public String getPostUserById(int id) {
+        return feedMapper.getPostUserById(id);
+    }
+
     public List<FeedImageDto> getPostImages(int feedId) {
         return feedMapper.getPostImages(feedId);
     }
