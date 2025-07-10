@@ -7,4 +7,8 @@
         SELECT profile_image
         FROM user WHERE user_id = #{userId}
     </select>
+    <select id="getUserNicknameById" parameterType="String" resultType="String">
+        SELECT nickname
+        FROM user WHERE user_id = #{userId}
+    </select>
 </mapper>

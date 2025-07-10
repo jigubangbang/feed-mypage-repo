@@ -184,11 +184,13 @@ public class FeedController {
                 int feedId = dto.getFeedId();
                 String authorId = feedService.getPostUserById(feedId);
                 String senderProfileImage = userService.getUserProfileById(userId);
+                String senderNickname = userService.getUserNicknameById(userId);
                 FeedNotificationRequestDto request = FeedNotificationRequestDto.builder()
                     .authorId(authorId)
                     .feedId(feedId)
                     .relatedUrl("/feed/" + feedId)
                     .senderId(userId)
+                    .nickname(senderNickname)
                     .senderProfileImage(senderProfileImage)
                     .build();
 
@@ -252,11 +254,13 @@ public class FeedController {
             try {
                 String authorId = feedService.getPostUserById(feedId);
                 String senderProfileImage = userService.getUserProfileById(userId);
+                String senderNickname = userService.getUserNicknameById(userId);
                 FeedNotificationRequestDto request = FeedNotificationRequestDto.builder()
                     .authorId(authorId)
                     .feedId(feedId)
                     .relatedUrl("/feed/" + feedId)
                     .senderId(userId)
+                    .nickname(senderNickname)
                     .senderProfileImage(senderProfileImage)
                     .build();
 

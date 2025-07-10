@@ -118,11 +118,14 @@ public class ProfileController {
 
         if (success) {
             try {
-                String profileImage = profileService.getProfileDto(sessionUserId).getProfileImage();
+                ProfileDto dto = profileService.getProfileDto(sessionUserId);
+                String profileImage = dto.getProfileImage();
+                String nickname = dto.getNickname();
                 FeedNotificationRequestDto request = FeedNotificationRequestDto.builder()
                     .authorId(userId)
                     .relatedUrl("/profile/" + sessionUserId)
                     .senderId(sessionUserId)
+                    .nickname(nickname)
                     .senderProfileImage(profileImage)
                     .build();
 

@@ -13,4 +13,8 @@ public class UserService {
     public String getUserProfileById(String userId) {
         return userMapper.getUserProfileById(userId);
     }
+
+    public String getUserNicknameById(String userId) {
+        return userMapper.getUserNicknameById(userId);
+    }
 }
