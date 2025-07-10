@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.feed_service.chat_service.NotificationServiceClient;
 import com.jigubangbang.feed_service.model.CommentDto;
+import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.PostDto;
 import com.jigubangbang.feed_service.model.chat_service.FeedNotificationRequestDto;
@@ -49,6 +50,20 @@ public class FeedController {
 
     @Resource
     private S3Service s3Service;
+
+    @GetMapping("/bookmark")
+    public ResponseEntity<Map<String, Object>> getBookmarkPosts(
+            @RequestHeader("User-Id") String userId,
+            @RequestParam int pageSize,
+            @RequestParam int offset) {
+        List<FeedDto> posts = feedService.getBookmarkPosts(userId, pageSize, offset);
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", userId);
+        response.put("totalItems", posts.size());
+        response.put("posts", posts);
+
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/{feedId}")
     public ResponseEntity<Map<String, Object>> getPostDetail(@RequestHeader("User-Id") String userId, @PathVariable int feedId) {

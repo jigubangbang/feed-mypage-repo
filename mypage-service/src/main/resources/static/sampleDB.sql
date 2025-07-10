@@ -129,6 +129,8 @@ ADD CONSTRAINT feed_comment_ibfk_3
 FOREIGN KEY (parent_comment_id) REFERENCES feed_comment(id)
 ON DELETE CASCADE;
 
+ALTER TABLE hashtag ADD COLUMN count INT NOT NULL DEFAULT 0;
+
 insert into feed_comment_like (comment_id, user_id) VALUES 
 (1, 'bbb'),
 (1, 'aaa'),

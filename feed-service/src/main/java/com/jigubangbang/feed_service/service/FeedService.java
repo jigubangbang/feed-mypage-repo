@@ -1,15 +1,23 @@
 package com.jigubangbang.feed_service.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jigubangbang.feed_service.mapper.FeedMapper;
+import com.jigubangbang.feed_service.mapper.HashtagMapper;
 import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
+import com.jigubangbang.feed_service.model.HashtagDto;
 import com.jigubangbang.feed_service.model.PostDto;
 
 @Service
@@ -17,12 +25,23 @@ public class FeedService {
     @Autowired
     private FeedMapper feedMapper;
 
+    @Autowired
+    private HashtagMapper hashtagMapper;
+
     public List<FeedDto> getUserPosts(String userId, int pageSize, int offset) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("pageSize", pageSize);
         map.put("offset", offset);
         return feedMapper.getUserPosts(map);
+    }
+
+    public List<FeedDto> getBookmarkPosts(String userId, int pageSize, int offset) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("pageSize", pageSize);
+        map.put("offset", offset);
+        return feedMapper.getBookmarkPosts(map);
     }
 
     public PostDto getPostDetail(int id) {
@@ -51,8 +70,24 @@ public class FeedService {
         return feedMapper.getPostBookmarkStatus(map) > 0;
     }
 
+    @Transactional
     public boolean addPost(PostDto dto) {
-        return feedMapper.addPost(dto) > 0;
+        boolean success = feedMapper.addPost(dto) > 0;
+        if (!success) return false;
+
+        List<String> hashtags = extractHashtags(dto.getTitle());
+        for (String tagName : hashtags) {
+            HashtagDto tag = hashtagMapper.findHashtagByName(tagName);
+            if (tag == null) {
+                tag = new HashtagDto();
+                tag.setName(tagName);
+                hashtagMapper.insertHashtag(tag);
+            } else {
+                hashtagMapper.incrementHashtagCount(tag.getId());
+            }
+            hashtagMapper.insertFeedHashtag(dto.getId(), tag.getId());
+        }
+        return true;
     }
 
     public boolean addVisitCountry(PostDto dto) {
@@ -104,5 +139,15 @@ public class FeedService {
         map.put("userId", userId);
         map.put("feedId", feedId);
         return feedMapper.removeBookmarkPost(map) > 0;
+    }
+
+    public List<String> extractHashtags(String content) {
+        Pattern pattern = Pattern.compile("#([\\w가-힣]+)");
+        Matcher matcher = pattern.matcher(content);
+        Set<String> hashtags = new HashSet<>();
+        while (matcher.find()) {
+            hashtags.add(matcher.group(1).toLowerCase());
+        }
+        return new ArrayList<>(hashtags);
     }
 }

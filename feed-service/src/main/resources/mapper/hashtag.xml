@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.feed_service.mapper.HashtagMapper">
+    <select id="findHashtagByName" parameterType="string" resultType="com.jigubangbang.feed_service.model.HashtagDto">
+        SELECT * FROM hashtag
+        WHERE name = #{name}
+    </select>
+    <!-- Insert new hashtag -->
+    <insert id="insertHashtag" parameterType="com.jigubangbang.feed_service.model.HashtagDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hashtag (name, count)
+        VALUES (#{name}, 1)
+    </insert>
+    <!-- Insert into feed_hashtag -->
+    <insert id="insertFeedHashtag" parameterType="map">
+        INSERT INTO feed_hashtag (feed_id, hashtag_id)
+        VALUES (#{feedId}, #{hashtagId})
+    </insert>
+    <update id="incrementHashtagCount" parameterType="int">
+        UPDATE hashtag
+        SET count = count + 1
+        WHERE id = #{id}
+    </update>
+    <select id="getTrendingHashtags" resultType="com.jigubangbang.feed_service.model.HashtagDto">
+        SELECT * FROM hashtag
+        ORDER BY count DESC
+        LIMIT #{limit}
+    </select>
+    <select id="getFeedByHashtag" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
+        SELECT
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fh.feed_id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fh.feed_id) AS comment_count
+        FROM feed_hashtag fh
+        LEFT JOIN hashtag h
+            ON fh.hashtag_id = h.id
+        LEFT JOIN feed_post fp
+            ON fp.id = fh.feed_id
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fh.feed_id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE h.name = #{tag}
+            AND fp.blind_status = 'VISIBLE'
+            AND fp.public_status = TRUE
+            AND fi.display_order = 1
+        ORDER BY like_count DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+</mapper>
