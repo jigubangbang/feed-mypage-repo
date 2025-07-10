@@ -121,6 +121,14 @@ CREATE TABLE feed_comment_like (
     FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
 
+ALTER TABLE feed_comment
+DROP FOREIGN KEY feed_comment_ibfk_3;
+
+ALTER TABLE feed_comment
+ADD CONSTRAINT feed_comment_ibfk_3
+FOREIGN KEY (parent_comment_id) REFERENCES feed_comment(id)
+ON DELETE CASCADE;
+
 insert into feed_comment_like (comment_id, user_id) VALUES 
 (1, 'bbb'),
 (1, 'aaa'),

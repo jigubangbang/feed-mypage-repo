@@ -59,6 +59,17 @@ public class FeedService {
         return feedMapper.addPostImage(dto) > 0;
     }
 
+    public boolean updatePost(PostDto dto) {
+        return feedMapper.updatePost(dto) > 0;
+    }
+
+    public boolean updatePublicStatus(int feedId, boolean publicStatus) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", feedId);
+        map.put("publicStatus", publicStatus);
+        return feedMapper.updatePublicStatus(map) > 0;
+    }
+
     public boolean deletePost(int id) {
         return feedMapper.deletePost(id) > 0;
     }

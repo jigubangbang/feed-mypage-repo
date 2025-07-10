@@ -11,7 +11,9 @@ import lombok.Setter;
 public class PostDto {
     private int id;
     private String userId;
+    private String countryId;
     private String countryName;
+    private String cityId;
     private String cityName;
     private String title;
     private Timestamp startDate;

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -114,6 +115,31 @@ public class FeedController {
             .body(Map.of("error", "Failed to delete post"));
     }
 
+    @PutMapping("/{feedId}")
+    public ResponseEntity<Map<String, Object>> updatePost(@RequestBody PostDto dto) {
+        System.out.println("UPDATING POST _________ title: " + dto.getTitle());
+        boolean success = feedService.updatePost(dto);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Post updated successfully");
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to update post"));
+    }
+
+    @PutMapping("/{feedId}/public")
+    public ResponseEntity<Map<String, Object>> updatePublicStatus(@PathVariable int feedId, @RequestParam("status") boolean publicStatus) {
+        boolean success = feedService.updatePublicStatus(feedId, publicStatus);
+        if (success) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Post updated successfully");
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("error", "Failed to update status"));
+    }
+
     @GetMapping("/{feedId}/comments")
     public ResponseEntity<Map<String, Object>> getComments(
             @RequestHeader("User-Id") String userId,
@@ -153,6 +179,8 @@ public class FeedController {
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Comment created successfully");
+            CommentDto comment = commentService.getCommentById(dto.getId());
+            response.put("comment", comment);
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

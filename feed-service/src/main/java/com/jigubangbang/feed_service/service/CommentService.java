@@ -15,6 +15,10 @@ public class CommentService {
     @Autowired
     private CommentMapper commentMapper;
 
+    public CommentDto getCommentById(int commentId) {
+        return commentMapper.getCommentById(commentId);
+    }
+
     public List<CommentDto> getComments(String userId, int feedId, int limit, int offset) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);

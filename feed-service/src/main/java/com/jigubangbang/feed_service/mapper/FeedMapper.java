@@ -20,6 +20,8 @@ public interface FeedMapper {
     public int addVisitCountry(PostDto dto);
     public int addPostImage(FeedImageDto dto);
     public int deletePost(int id);
+    public int updatePost(PostDto dto);
+    public int updatePublicStatus(Map<String, Object> map);
     public int likePost(Map<String, Object> map);
     public int unlikePost(Map<String, Object> map);
     public int bookmarkPost(Map<String, Object> map);

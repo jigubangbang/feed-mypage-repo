@@ -90,10 +90,21 @@
         INSERT INTO feed_image (feed_id, photo_url, display_order)
         VALUES (#{feedId}, #{photoUrl}, #{displayOrder})
     </insert>
-    <delete id="deletePost" parameterType="int">
-        DELETE FROM feed_post
+    <update id="deletePost" parameterType="int">
+        UPDATE feed_post
+        SET blind_status = "BLINDED"
         WHERE id = #{id}
-    </delete>
+    </update>
+    <update id="updatePost" parameterType="com.jigubangbang.feed_service.model.PostDto">
+        UPDATE feed_post
+        SET title = #{title}
+        WHERE id = #{id}
+    </update>
+    <update id="updatePublicStatus" parameterType="map">
+        UPDATE feed_post
+        SET public_status = #{publicStatus}
+        WHERE id = #{id}
+    </update>
     <insert id="likePost" parameterType="map">
         INSERT INTO feed_like (feed_id, user_id)
         VALUES (#{feedId}, #{userId})
