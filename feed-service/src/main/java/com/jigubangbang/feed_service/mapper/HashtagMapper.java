@@ -12,8 +12,10 @@ import com.jigubangbang.feed_service.model.HashtagDto;
 public interface HashtagMapper {
     public HashtagDto findHashtagByName(String name);
     public int insertHashtag(HashtagDto dto);
+    public int deleteFeedHashtag(@Param("feedId") int feedId);
     public int insertFeedHashtag(@Param("feedId") int feedId, @Param("hashtagId") int hashtagId);
     public int incrementHashtagCount(int id);
     public List<HashtagDto> getTrendingHashtags(@Param("limit") int limit);
     public List<FeedDto> getFeedByHashtag(@Param("tag") String tag, @Param("pageSize") int pageSize, @Param("offset") int offset);
+    public List<HashtagDto> getTagsByKeyword(@Param("keyword") String keyword, @Param("limit") int limit);
 }

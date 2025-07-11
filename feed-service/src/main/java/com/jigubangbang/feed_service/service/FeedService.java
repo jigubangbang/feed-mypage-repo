@@ -99,7 +99,24 @@ public class FeedService {
     }
 
     public boolean updatePost(PostDto dto) {
-        return feedMapper.updatePost(dto) > 0;
+        boolean success = feedMapper.updatePost(dto) > 0;
+        if (!success) return false;
+
+        List<String> hashtags = extractHashtags(dto.getTitle());
+        hashtagMapper.deleteFeedHashtag(dto.getId());
+        for (String tagName : hashtags) {
+            HashtagDto tag = hashtagMapper.findHashtagByName(tagName);
+            if (tag == null) {
+                tag = new HashtagDto();
+                tag.setName(tagName);
+                hashtagMapper.insertHashtag(tag);
+            } else {
+                hashtagMapper.incrementHashtagCount(tag.getId());
+            }
+            hashtagMapper.insertFeedHashtag(dto.getId(), tag.getId());
+        }
+        return true;
+
     }
 
     public boolean updatePublicStatus(int feedId, boolean publicStatus) {

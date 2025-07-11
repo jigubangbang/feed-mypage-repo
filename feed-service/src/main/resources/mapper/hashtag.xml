@@ -14,9 +14,13 @@
     </insert>
     <!-- Insert into feed_hashtag -->
     <insert id="insertFeedHashtag" parameterType="map">
-        INSERT INTO feed_hashtag (feed_id, hashtag_id)
+        INSERT IGNORE INTO feed_hashtag (feed_id, hashtag_id)
         VALUES (#{feedId}, #{hashtagId})
     </insert>
+    <delete id="deleteFeedHashtag" parameterType="int">
+        DELETE FROM feed_hashtag
+        WHERE feed_id = #{feedId}
+    </delete>
     <update id="incrementHashtagCount" parameterType="int">
         UPDATE hashtag
         SET count = count + 1
@@ -51,5 +55,11 @@
             AND fi.display_order = 1
         ORDER BY like_count DESC
         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getTagsByKeyword" resultType="com.jigubangbang.feed_service.model.HashtagDto" parameterType="map">
+        SELECT * FROM hashtag
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY count DESC
+        LIMIT #{limit}
     </select>
 </mapper>

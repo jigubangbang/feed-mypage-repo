@@ -17,7 +17,7 @@ import com.jigubangbang.feed_service.service.HashtagService;
 import jakarta.annotation.Resource;
 
 @RestController
-@RequestMapping("/feed/public")
+@RequestMapping("/public")
 public class HashtagController {
     @Resource
     private HashtagService hashtagService;
@@ -35,5 +35,13 @@ public class HashtagController {
             @RequestParam("offset") int offset) {
         List<FeedDto> posts = hashtagService.getFeedByHashtag(tag, pageSize, offset);
         return ResponseEntity.ok(Map.of("posts", posts));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> getTagsByKeyword(
+            @RequestParam("keyword") String keyword,
+            @RequestParam("limit") int limit) {
+        List<HashtagDto> tags = hashtagService.getTagsByKeyword(keyword, limit);
+        return ResponseEntity.ok(Map.of("tags", tags));
     }
 }

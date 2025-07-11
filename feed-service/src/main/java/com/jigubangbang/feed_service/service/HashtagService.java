@@ -22,4 +22,7 @@ public class HashtagService {
         return hashtagMapper.getFeedByHashtag(tag, pageSize, offset);
     }
 
+    public List<HashtagDto> getTagsByKeyword(String keyword, int limit) {
+        return hashtagMapper.getTagsByKeyword(keyword, limit);
+    }
 }

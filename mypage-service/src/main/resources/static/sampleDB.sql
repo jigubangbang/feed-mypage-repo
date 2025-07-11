@@ -111,6 +111,64 @@ INSERT INTO feed_comment (feed_id, user_id, parent_comment_id, content) VALUES
 (1, 'bbb', 2, '감바스랑 빠에야가 가장 맛있었어요!'),
 (1, 'eee', NULL, '서핑하는 사람들 보면서 커피라니... 너무 멋져요.');
 
+
+INSERT INTO feed_image (feed_id, photo_url, display_order) VALUES
+(1, 'https://i.pinimg.com/736x/83/89/52/83895264750bf768114d2c65459641db.jpg', 1), /*korea*/
+(2, 'https://i.pinimg.com/736x/9d/c9/ae/9dc9aec42a5ca2b933ec90a8fb1eb8c4.jpg', 1),
+(1, 'https://i.pinimg.com/736x/e9/dc/d8/e9dcd8642209aa8dfd5ab8fb49286e15.jpg', 1),
+(1, 'https://i.pinimg.com/736x/52/45/9e/52459e278fafb10d3a7f48e8606e8ee7.jpg', 1),
+(1, 'https://i.pinimg.com/736x/00/08/3c/00083cc80645e084d385088c578cd30c.jpg', 1),
+(1, 'https://i.pinimg.com/736x/a7/2f/4f/a72f4ffa0d5b8d7aff33b63ec37f4e4e.jpg', 1),
+(2, 'https://i.pinimg.com/736x/12/ad/5d/12ad5dc85d97209bb4d3f24d19864a4c.jpg', 1), /*france*/
+(2, 'https://i.pinimg.com/736x/35/da/f2/35daf21772c0923e80d80e8d2461a4db.jpg', 1), /*france*/
+(3, 'https://i.pinimg.com/736x/ae/09/b6/ae09b66ba6f2c97b70b40661be900817.jpg', 1), /*turkey*/
+(4, 'https://i.pinimg.com/736x/51/a7/51/51a751f51df9896e4605135c4b0121d0.jpg', 1),
+(5, 'https://i.pinimg.com/736x/94/a8/73/94a873b4b35bece7f257d467a605474f.jpg', 1),
+(6, 'https://i.pinimg.com/736x/63/cc/4e/63cc4e3af4b264f65940776b63fcec1e.jpg', 1),
+(7, 'https://i.pinimg.com/736x/32/00/55/3200554b45f388dde67ec2d2ad50dcc0.jpg', 1),
+(8, 'https://i.pinimg.com/736x/81/56/6c/81566c984cecd927d9d0752aeef582db.jpg', 1),
+(9, 'https://i.pinimg.com/736x/d3/be/c9/d3bec943f8a1e8b57d6e51d24c003a0d.jpg', 1),
+(10, 'https://i.pinimg.com/736x/4c/49/75/4c497530e4aaca38ef7da0855cb3f58c.jpg', 1);
+
+INSERT INTO feed_post (user_id, country_id, city_id, title)
+VALUES
+('bbb', 'KOR', 2331, '오랜만에 서울 #여행 #먹거리'),
+('bbb', 'FRA', 2974, '몽마르트 언덕 근처 카페에서 에스프레소를 마시며 파리의 흐린 하늘을 바라보았습니다. #여행 #먹거리'),
+('bbb', 'TUR', 3357, '보스포루스 해협에서 해질녘 들려오는 아잔 소리가 도시의 분위기를 더해주네요. #여행'),
+('bbb', 'CAN', 3939, '바다 옆 산책로를 따라 걸으며 노을에 물든 산의 모습을 감상했습니다. #여행'),
+('bbb', 'ITA', 1464, '트레비 분수에 동전을 던지고 돌아오는 길에 피스타치오 젤라또를 먹었습니다. #여행'),
+('bbb', 'ISL', 1449, '별이 가득한 밤하늘 아래에서 오로라를 기다리며 담요를 덮고 앉아 있었습니다. #여행'),
+('bbb', 'MAR', 2487, '다채로운 수크(시장)를 거닐며 민트차를 마시고 향신료를 구경했습니다. #여행'),
+('bbb', 'KOR', 2331, '청계천을 따라 밤 산책을 하며 반짝이는 네온사인을 구경했습니다. #여행'),
+('bbb', 'ESP', 654, '옥상 테라스에서 따뜻한 바람을 맞으며 타파스를 즐긴 하루였습니다. #여행'),
+('bbb', 'AUS', 130, '본다이 비치에서 서핑하는 사람들을 보며 아침 커피를 마셨습니다. #여행');
+
+insert into feed_hashtag (feed_id, hashtag_id) values 
+(39, 16),
+(40, 16);
+
+INSERT INTO feed_image (feed_id, photo_url, display_order) VALUES
+(39, 'https://i.pinimg.com/736x/83/89/52/83895264750bf768114d2c65459641db.jpg', 1),
+(40, 'https://i.pinimg.com/1200x/92/f8/93/92f8938c67c364c0b9d904e4611c3da7.jpg', 1),
+(41, 'https://i.pinimg.com/1200x/7f/a3/bd/7fa3bd5ae7c6c6436fc74f5f02792c9a.jpg', 1),
+(42, 'https://i.pinimg.com/736x/d0/a8/bc/d0a8bc8052b6d1e2f5355a39a0ec4835.jpg', 1),
+(43, 'https://i.pinimg.com/736x/48/b8/79/48b879166473e5617396beab3767c40e.jpg', 1),
+(44, 'https://i.pinimg.com/736x/80/97/63/8097634f1268fbc8a0cfe88ab4ceaac8.jpg', 1),
+(45, 'https://i.pinimg.com/736x/3d/ff/b1/3dffb1f831f415e1c0141d272b5321f7.jpg', 1),
+(46, 'https://i.pinimg.com/736x/73/3c/cc/733ccc53fd193bbe8eae70588ced36a4.jpg', 1),
+(47, 'https://i.pinimg.com/1200x/ee/b6/18/eeb618a1025171ef8c6ff10c7b77c1f1.jpg', 1),
+(48, 'https://i.pinimg.com/736x/a1/f1/69/a1f169ad0e2e541d1bb027b0145eb8f0.jpg', 1),
+(49, 'https://i.pinimg.com/1200x/52/05/3e/52053e9251316afd96cbfd30b188994c.jpg', 1),
+(50, 'https://i.pinimg.com/1200x/45/bd/a1/45bda16f28cbb44f6a53db7bf116c3ab.jpg', 1),
+(51, 'https://i.pinimg.com/736x/39/48/e5/3948e56a0107ebd48e0617aa6de8ce5a.jpg', 1),
+(52, 'https://i.pinimg.com/736x/4a/70/74/4a7074e01ac804231a3956c5933cd106.jpg', 1),
+(53, 'https://i.pinimg.com/736x/f3/50/16/f3501627391116affcffaaecd7c3ae2a.jpg', 1),
+(54, 'https://i.pinimg.com/1200x/9e/46/0e/9e460ea01004cb8422c230945d509279.jpg', 1),
+(55, 'https://i.pinimg.com/736x/b6/34/3b/b6343bcc49f5bfed1a08d837f6f425dd.jpg', 1),
+(56, 'https://i.pinimg.com/1200x/28/bb/15/28bb15db7bcea22746521bb5c3fd803a.jpg', 1),
+(57, 'https://i.pinimg.com/1200x/95/de/95/95de956ca1abc82350ad6384c5f79c9e.jpg', 1),
+(58, 'https://i.pinimg.com/736x/48/77/19/487719d760a8d8287e98709cfc14cbbd.jpg', 1);
+
 CREATE TABLE feed_comment_like (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     comment_id INT NOT NULL,
@@ -137,33 +195,101 @@ insert into feed_comment_like (comment_id, user_id) VALUES
 (1, 'ccc'),
 (2, 'bbb'),
 (2, 'aaa');
+insert into follow (follower_id, following_id) VALUES
+('jigubang', 'aaa'),
+('jigubang', 'ccc'),
+('jigubang', 'ddd'),
+('jigubang', 'eee'),
+('jigubang', 'fff'),
+('jigubang', 'ggg'),
+('jigubang', 'hhh'),
+('jigubang', 'iii'),
+('jigubang', 'jjj'),
+('jigubang', 'kkk'),
+('jigubang', 'lll'),
+('jigubang', 'mmm'),
+('jigubang', 'nnn'),
+('jigubang', 'ooo'),
+('jigubang', 'ppp'),
+('jigubang', 'qqq'),
+('jigubang', 'rrr'),
+('jigubang', 'sss'),
+('jigubang', 'ttt'),
+('jigubang', 'uuu'),
+('jigubang', 'vvv'),
+('jigubang', 'www'),
+('jigubang', 'xxx'),
+('jigubang', 'yyy'),
+('jigubang', 'zzz');
 
 insert into follow (follower_id, following_id) VALUES
-('bbb', 'aaa'),
-('bbb', 'ccc'),
-('bbb', 'ddd'),
-('bbb', 'eee'),
-('bbb', 'fff'),
-('bbb', 'ggg'),
-('bbb', 'hhh'),
-('bbb', 'iii'),
-('bbb', 'jjj'),
-('bbb', 'kkk'),
-('bbb', 'lll'),
-('bbb', 'mmm'),
-('bbb', 'nnn'),
-('bbb', 'ooo'),
-('bbb', 'ppp'),
-('bbb', 'qqq'),
-('bbb', 'rrr'),
-('bbb', 'sss'),
-('bbb', 'ttt'),
-('bbb', 'uuu'),
-('bbb', 'vvv'),
-('bbb', 'www'),
-('bbb', 'xxx'),
-('bbb', 'yyy'),
-('bbb', 'zzz');
+('aaa', 'jigubang'),
+('ccc', 'jigubang'),
+('ddd', 'jigubang'),
+('eee', 'jigubang'),
+('fff', 'jigubang'),
+('ggg', 'jigubang'),
+('hhh', 'jigubang'),
+('iii', 'jigubang'),
+('jjj', 'jigubang'),
+('kkk', 'jigubang'),
+('lll', 'jigubang'),
+('mmm', 'jigubang'),
+('nnn', 'jigubang'),
+('ooo', 'jigubang'),
+('ppp', 'jigubang'),
+('qqq', 'jigubang'),
+('rrr', 'jigubang'),
+('sss', 'jigubang'),
+('ttt', 'jigubang'),
+('uuu', 'jigubang'),
+('vvv', 'jigubang'),
+('www', 'jigubang'),
+('xxx', 'jigubang');
+
+
+INSERT INTO feed_post (user_id, country_id, city_id, title)
+VALUES
+('bbb', 'KOR', 2331, '오랜만에 서울 #여행 #먹거리'),
+('bbb', 'FRA', 2974, '몽마르트 언덕 근처 카페에서 에스프레소를 마시며 파리의 흐린 하늘을 바라보았습니다. #여행 #먹거리'),
+('bbb', 'TUR', 3357, '보스포루스 해협에서 해질녘 들려오는 아잔 소리가 도시의 분위기를 더해주네요. #먹거리'),
+('bbb', 'CAN', 3939, '바다 옆 산책로를 따라 걸으며 노을에 물든 산의 모습을 감상했습니다. #먹거리'),
+('bbb', 'ITA', 1464, '트레비 분수에 동전을 던지고 돌아오는 길에 피스타치오 젤라또를 먹었습니다. #먹거리'),
+('bbb', 'ISL', 1449, '별이 가득한 밤하늘 아래에서 오로라를 기다리며 담요를 덮고 앉아 있었습니다. #먹거리'),
+('bbb', 'MAR', 2487, '다채로운 수크(시장)를 거닐며 민트차를 마시고 향신료를 구경했습니다. #먹거리'),
+('bbb', 'KOR', 2331, '청계천을 따라 밤 산책을 하며 반짝이는 네온사인을 구경했습니다. #먹거리'),
+('bbb', 'ESP', 654, '옥상 테라스에서 따뜻한 바람을 맞으며 타파스를 즐긴 하루였습니다. #먹거리'),
+('bbb', 'AUS', 130, '본다이 비치에서 서핑하는 사람들을 보며 아침 커피를 마셨습니다. #먹거리');
+
+describe feed_hashtag;
+/* #먹거리 에 피드 추가*/
+insert into feed_hashtag (feed_id, hashtag_id) values 
+(49, 16),
+(50, 16),
+(51, 16),
+(52, 16),
+(53, 16),
+(54, 16),
+(55, 16),
+(56, 16),
+(57, 16),
+(58, 16)
+;
+
+select * from hashtag;
+select * from feed_hashtag;
+select * from feed_post;
+INSERT INTO feed_image (feed_id, photo_url, display_order) VALUES
+(49, 'https://i.pinimg.com/1200x/52/05/3e/52053e9251316afd96cbfd30b188994c.jpg', 1),
+(50, 'https://i.pinimg.com/1200x/45/bd/a1/45bda16f28cbb44f6a53db7bf116c3ab.jpg', 1),
+(51, 'https://i.pinimg.com/736x/39/48/e5/3948e56a0107ebd48e0617aa6de8ce5a.jpg', 1),
+(52, 'https://i.pinimg.com/736x/4a/70/74/4a7074e01ac804231a3956c5933cd106.jpg', 1),
+(53, 'https://i.pinimg.com/736x/f3/50/16/f3501627391116affcffaaecd7c3ae2a.jpg', 1),
+(54, 'https://i.pinimg.com/1200x/9e/46/0e/9e460ea01004cb8422c230945d509279.jpg', 1),
+(55, 'https://i.pinimg.com/736x/b6/34/3b/b6343bcc49f5bfed1a08d837f6f425dd.jpg', 1),
+(56, 'https://i.pinimg.com/1200x/28/bb/15/28bb15db7bcea22746521bb5c3fd803a.jpg', 1),
+(57, 'https://i.pinimg.com/1200x/95/de/95/95de956ca1abc82350ad6384c5f79c9e.jpg', 1),
+(58, 'https://i.pinimg.com/736x/48/77/19/487719d760a8d8287e98709cfc14cbbd.jpg', 1);
 
 INSERT INTO style_test_question (content) VALUES
 ('여행을 떠나볼까? 어디로 갈지 먼저 생각해봐야지!'),
