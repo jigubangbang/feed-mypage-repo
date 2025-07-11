@@ -11,4 +11,29 @@
         SELECT nickname
         FROM user WHERE user_id = #{userId}
     </select>
+    <select id="getFriendRecommendations" parameterType="map" resultType="com.jigubangbang.feed_service.model.UserDto">
+        SELECT 
+            u.user_id,
+            u.nickname,
+            u.is_premium,
+            u.profile_image,
+            u.bio,
+            u.nationality,
+            u.travel_style_id,
+            ts.label AS travelStyleLabel
+        FROM user u
+        LEFT JOIN travel_style ts
+            ON ts.id = u.travel_style_id
+        WHERE u.travel_style_id = (SELECT travel_style_id from user WHERE user_id = #{userId})
+            AND u.user_id != #{userId}
+            AND u.user_status = 'ACTIVE'
+            AND u.role = 'ROLE_USER'
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="getUserByKeyword" parameterType="map" resultType="com.jigubangbang.feed_service.model.UserDto">
+        SELECT * FROM user
+        WHERE (user_id LIKE CONCAT('%', #{keyword}, '%'))
+        OR (nickname LIKE CONCAT('%', #{keyword}, '%'))
+        LIMIT #{limit}
+    </select>
 </mapper>
