@@ -40,7 +40,5 @@ public interface ProfileMapper {
     public int removeLanguage(int id);
     public int updateLanguage(LanguageUserDto dto);
     public int getIdByLanguageUser(Map<String, Object> map);
-
-    public List<BadgeDto> getUserBadges(String userId);
-    public List<BadgeUserDto> getBadgeDetail(int id);
+    public boolean isUserPremium(String userId);
 }

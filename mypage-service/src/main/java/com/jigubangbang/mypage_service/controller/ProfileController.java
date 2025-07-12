@@ -241,4 +241,10 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Map.of("error", "Failed to update language"));
     }
+
+    @GetMapping("/membership-status")
+    public ResponseEntity<Map<String, Object>> isUserPremium(@RequestHeader("User-Id") String userId) {
+        boolean isPremium = profileService.isUserPremium(userId);
+        return ResponseEntity.ok(Map.of("status", isPremium));
+    }
 }

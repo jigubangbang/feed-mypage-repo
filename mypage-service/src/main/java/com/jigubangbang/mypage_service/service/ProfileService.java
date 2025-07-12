@@ -139,11 +139,7 @@ public class ProfileService {
         return profileMapper.getIdByLanguageUser(map);
     }
 
-    public List<BadgeDto> getUserBadges(String userId) {
-        return profileMapper.getUserBadges(userId);
-    }
-
-    public List<BadgeUserDto> getBadgeDetail(int id) {
-        return profileMapper.getBadgeDetail(id);
+    public boolean isUserPremium(String userId) {
+        return profileMapper.isUserPremium(userId);
     }
 }

@@ -28,12 +28,25 @@
             AND u.user_id != #{userId}
             AND u.user_status = 'ACTIVE'
             AND u.role = 'ROLE_USER'
+            AND NOT EXISTS (
+                SELECT 1
+                FROM follow f
+                WHERE f.follower_id = #{userId} AND f.following_id = u.user_id
+            )
+        ORDER BY u.created_at DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
-    <select id="getUserByKeyword" parameterType="map" resultType="com.jigubangbang.feed_service.model.UserDto">
-        SELECT * FROM user
-        WHERE (user_id LIKE CONCAT('%', #{keyword}, '%'))
-        OR (nickname LIKE CONCAT('%', #{keyword}, '%'))
+    <select id="getUserByKeyword" parameterType="map" resultType="com.jigubangbang.feed_service.model.SearchUserDto">
+        SELECT
+            u.user_id, u.nickname, u.is_premium, u.profile_image,
+            (SELECT COUNT(*) FROM follow WHERE follower_id=u.user_id) AS followingCount,
+            (SELECT COUNT(*) FROM follow WHERE following_id=u.user_id) AS followerCount,
+            (SELECT COUNT(*) FROM country_visit WHERE user_id=u.user_id) AS countryVisitCount
+        FROM user u
+        WHERE ((u.user_id LIKE CONCAT('%', #{keyword}, '%'))
+        OR (u.nickname LIKE CONCAT('%', #{keyword}, '%')))
+            AND u.user_status = 'ACTIVE'
+            AND u.role = 'ROLE_USER'
         LIMIT #{limit}
     </select>
 </mapper>

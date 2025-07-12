@@ -125,27 +125,8 @@
         SET proficiency = #{proficiency}
         WHERE id=#{id}
     </update>
-    <select id="getUserBadges" parameterType="String" resultType="com.jigubangbang.mypage_service.model.BadgeDto">
-        SELECT
-            b.id,
-            b.icon,
-            bu.user_id IS NOT NULL AS acquiredStatus
-        FROM badge b
-        LEFT JOIN badge_user bu
-            ON b.id = bu.badge_id AND bu.user_id = #{userId}
-    </select>
-    <select id="getBadgeDetail" parameterType="int" resultType="com.jigubangbang.mypage_service.model.BadgeUserDto">
-        SELECT
-            b.id,
-            b.kor_title,
-            b.description,
-            b.icon,
-            b.difficulty,
-            bu.awarded_at,
-            bu.is_displayed
-        FROM badge b
-        LEFT JOIN badge_user bu
-            ON b.id = bu.badge_id
-        WHERE id = #{id}
+    <select id="isUserPremium" parameterType="String" resultType="boolean">
+        SELECT is_premium
+        FROM user WHERE user_id = #{userId}
     </select>
 </mapper>
