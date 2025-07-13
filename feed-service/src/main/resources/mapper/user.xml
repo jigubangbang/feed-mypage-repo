@@ -24,15 +24,23 @@
         FROM user u
         LEFT JOIN travel_style ts
             ON ts.id = u.travel_style_id
-        WHERE u.travel_style_id = (SELECT travel_style_id from user WHERE user_id = #{userId})
-            AND u.user_id != #{userId}
-            AND u.user_status = 'ACTIVE'
-            AND u.role = 'ROLE_USER'
-            AND NOT EXISTS (
-                SELECT 1
-                FROM follow f
-                WHERE f.follower_id = #{userId} AND f.following_id = u.user_id
+        WHERE (
+            u.travel_style_id = (SELECT travel_style_id FROM user WHERE user_id = #{userId})
+            OR u.travel_style_id IN (
+                SELECT partner_travel_style_id
+                FROM travel_style_match
+                WHERE travel_style_id = (SELECT travel_style_id FROM user WHERE user_id = #{userId})
+                AND match_status IS TRUE
             )
+        )
+        AND u.user_id != #{userId}
+        AND u.user_status = 'ACTIVE'
+        AND u.role = 'ROLE_USER'
+        AND NOT EXISTS (
+            SELECT 1
+            FROM follow f
+            WHERE f.follower_id = #{userId} AND f.following_id = u.user_id
+        )
         ORDER BY u.created_at DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>

@@ -8,4 +8,36 @@
         SET travel_style_id = #{travelStyleId}
         WHERE user_id = #{userId}
     </update>
+    <select id="getStyleList" resultType="com.jigubangbang.feed_service.model.TravelStyleBasicDto">
+        SELECT id, label
+        FROM travel_style 
+    </select>
+    <select id="getStyleDetail" resultType="com.jigubangbang.feed_service.model.TravelStyleDto" parameterType="string">
+        SELECT * FROM travel_style
+        WHERE id=#{id}
+    </select>
+    <select id="getCompatibleStyles" resultType="com.jigubangbang.feed_service.model.TravelStyleMatchDto" parameterType="string">
+        SELECT
+            tsm.partner_travel_style_id,
+            tsm.match_status,
+            tsm.description,
+            ts.label AS partnerTravelStyleLabel
+        FROM travel_style_match tsm
+        LEFT JOIN travel_style ts
+            ON ts.id = tsm.partner_travel_style_id
+        WHERE tsm.travel_style_id = #{travelStyleId}
+        AND tsm.match_status IS TRUE
+    </select>
+    <select id="getIncompatibleStyles" resultType="com.jigubangbang.feed_service.model.TravelStyleMatchDto" parameterType="string">
+        SELECT
+            tsm.partner_travel_style_id,
+            tsm.match_status,
+            tsm.description,
+            ts.label AS partnerTravelStyleLabel
+        FROM travel_style_match tsm
+        LEFT JOIN travel_style ts
+            ON ts.id = tsm.partner_travel_style_id
+        WHERE tsm.travel_style_id = #{travelStyleId}
+        AND tsm.match_status IS FALSE
+    </select>
 </mapper>
