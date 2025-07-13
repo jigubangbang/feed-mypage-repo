@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jigubangbang.feed_service.mapper.FeedMapper;
 import com.jigubangbang.feed_service.mapper.HashtagMapper;
 import com.jigubangbang.feed_service.model.FeedDto;
+import com.jigubangbang.feed_service.model.FeedFilterDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.HashtagDto;
 import com.jigubangbang.feed_service.model.PostDto;
@@ -27,6 +28,10 @@ public class FeedService {
 
     @Autowired
     private HashtagMapper hashtagMapper;
+
+    public List<FeedDto> getPosts(FeedFilterDto filter) {
+        return feedMapper.getPosts(filter);
+    }
 
     public List<FeedDto> getUserPosts(String userId, int pageSize, int offset) {
         Map<String, Object> map = new HashMap<>();

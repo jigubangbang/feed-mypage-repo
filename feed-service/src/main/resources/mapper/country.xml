@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.feed_service.mapper.CountryMapper">
+    <select id="getAllCountries" resultType="com.jigubangbang.feed_service.model.CountryDto">
+        SELECT * FROM country
+    </select>
+    <select id="getCityByCountry" resultType="com.jigubangbang.feed_service.model.CityDto" parameterType="string">
+        SELECT * from city
+        WHERE country_id = #{countryId}
+    </select>
+</mapper>

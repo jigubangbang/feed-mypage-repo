@@ -6,11 +6,13 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.jigubangbang.feed_service.model.FeedDto;
+import com.jigubangbang.feed_service.model.FeedFilterDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.PostDto;
 
 @Mapper
 public interface FeedMapper {
+    public List<FeedDto> getPosts(FeedFilterDto filter);
     public List<FeedDto> getUserPosts(Map<String, Object> map);
     public List<FeedDto> getBookmarkPosts(Map<String, Object> map);
     public PostDto getPostDetail(int id);

@@ -3,6 +3,43 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jigubangbang.feed_service.mapper.FeedMapper">
+    <select id="getPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="com.jigubangbang.feed_service.model.FeedFilterDto">
+        SELECT
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.public_status IS TRUE
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        <if test="countryId != null">
+            AND fp.country_id = #{countryId}
+        </if>
+        <if test="cityId != null">
+            AND fp.city_id = #{cityId}
+        </if>
+        <if test="startDate != null and endDate != null">
+            AND (#{startDate} BETWEEN fp.start_date AND fp.end_date
+            OR #{endDate} BETWEEN fp.start_date AND fp.end_date)
+        </if>
+        <choose>
+            <when test="sort != null and sort.equals('like')">
+                ORDER BY like_count DESC
+            </when>
+            <otherwise>
+                ORDER BY fp.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
     <select id="getUserPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
         SELECT 
             fp.id, fi.photo_url,
