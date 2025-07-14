@@ -106,6 +106,29 @@
         ORDER BY fb.bookmarked_at DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
+    <select id="getTopPosts" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="map">
+        SELECT 
+            fp.id, 
+            u.nickname, u.profile_image,
+            fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count
+        FROM feed_post fp
+        LEFT JOIN user u
+            ON u.user_id = fp.user_id
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.public_status IS TRUE
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        ORDER BY like_count DESC
+        LIMIT #{limit}
+    </select>
     <select id="getPostDetail" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="int">
         SELECT
             fp.id,

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedFilterDto;
 import com.jigubangbang.feed_service.model.HashtagDto;
+import com.jigubangbang.feed_service.model.PostDto;
 import com.jigubangbang.feed_service.service.FeedService;
 import com.jigubangbang.feed_service.service.HashtagService;
 
@@ -48,6 +49,12 @@ public class PublicFeedController {
         filter.setOffset(offset);
 
         List<FeedDto> posts = feedService.getPosts(filter);
+        return ResponseEntity.ok(Map.of("posts", posts));
+    }
+
+    @GetMapping("/posts/top")
+    public ResponseEntity<Map<String, Object>> getTopPosts(@RequestParam(defaultValue = "5") int limit) {
+        List<PostDto> posts = feedService.getTopPosts(limit);
         return ResponseEntity.ok(Map.of("posts", posts));
     }
 

@@ -57,6 +57,10 @@ public class FeedService {
         return feedMapper.getBookmarkPosts(map);
     }
 
+    public List<PostDto> getTopPosts(int limit) {
+        return feedMapper.getTopPosts(limit);
+    }
+
     public PostDto getPostDetail(int id) {
         return feedMapper.getPostDetail(id);
     }

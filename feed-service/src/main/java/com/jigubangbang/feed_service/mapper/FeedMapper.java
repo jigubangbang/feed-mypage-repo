@@ -16,6 +16,7 @@ public interface FeedMapper {
     public List<FeedDto> getUserPosts(Map<String, Object> map);
     public List<FeedDto> getFollowingPosts(Map<String, Object> map);
     public List<FeedDto> getBookmarkPosts(Map<String, Object> map);
+    public List<PostDto> getTopPosts(int limit);
     public PostDto getPostDetail(int id);
     public String getPostUserById(int id);
     public List<FeedImageDto> getPostImages(int feedId);
