@@ -10,4 +10,17 @@
         SELECT * from city
         WHERE country_id = #{countryId}
     </select>
+    <select id="getRankedCountries" resultType="com.jigubangbang.feed_service.model.CountryDto" parameterType="int">
+        SELECT 
+            c.id,
+            c.name,
+            COUNT(*) AS post_count
+        FROM feed_post fp
+        INNER JOIN country c
+            ON c.id = fp.country_id
+        WHERE blind_status = 'VISIBLE'
+        GROUP BY fp.country_id
+        ORDER BY post_count DESC
+        LIMIT #{limit}
+    </select>
 </mapper>

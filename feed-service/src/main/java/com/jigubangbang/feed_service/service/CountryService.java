@@ -21,4 +21,8 @@ public class CountryService {
     public List<CityDto> getCityByCountry(String countryId) {
         return countryMapper.getCityByCountry(countryId);
     }
+
+    public List<CountryDto> getRankedCountries(int limit) {
+        return countryMapper.getRankedCountries(limit);
+    }
 }
