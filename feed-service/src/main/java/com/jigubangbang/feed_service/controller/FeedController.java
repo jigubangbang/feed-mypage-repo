@@ -51,6 +51,15 @@ public class FeedController {
     @Resource
     private S3Service s3Service;
 
+    @GetMapping("/following")
+    public ResponseEntity<Map<String, Object>> getFollowingPosts(
+            @RequestHeader("User-Id") String userId,
+            @RequestParam int pageSize,
+            @RequestParam int offset) {
+        List<FeedDto> posts = feedService.getFollowingPosts(userId, pageSize, offset);
+        return ResponseEntity.ok(Map.of("posts", posts));
+    }
+
     @GetMapping("/bookmark")
     public ResponseEntity<Map<String, Object>> getBookmarkPosts(
             @RequestHeader("User-Id") String userId,

@@ -3,6 +3,10 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jigubangbang.mypage_service.mapper.MapMapper">
+    <select id="getMapInfo" resultType="string" parameterType="string">
+        SELECT map_color FROM user
+        WHERE user_id = #{userId}
+    </select>
     <select id="getCountryList" resultType="com.jigubangbang.mypage_service.model.CountryDto" parameterType="map">
         SELECT
             c.id,
@@ -36,6 +40,10 @@
         <if test="continent != null and continent != ''">
             AND c.continent = #{continent}
         </if>
+    </select>
+    <select id="getBasicVisitedCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitBasicDto" parameterType="String">
+        SELECT id, country_id FROM country_visit
+        WHERE user_id = #{userId}
     </select>
     <select id="getWishlistCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitDto" parameterType="String">
         SELECT * FROM country_wish
@@ -101,9 +109,16 @@
         AND country_id = #{countryId}
     </delete>
     <select id="getCountryFeed" resultType="com.jigubangbang.mypage_service.model.FeedPostDto" parameterType="map">
-        SELECT * FROM feed_post
-        WHERE country_id = #{countryId}
-        AND user_id = #{userId}
+        SELECT 
+            fp.id, fp.country_id, 
+            fp.city_id, fp.title, fp.created_at, 
+            fi.photo_url AS thumbnail
+        FROM feed_post fp
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        WHERE fp.country_id = #{countryId}
+            AND fp.user_id = #{userId}
+            AND fp.blind_status = "VISIBLE"
     </select>
     <update id="changeMapColor" parameterType="map">
         UPDATE user

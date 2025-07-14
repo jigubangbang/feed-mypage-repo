@@ -60,6 +60,29 @@
         ORDER BY fp.created_at DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
+    <select id="getFollowingPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
+        SELECT 
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN follow f
+            ON f.following_id = fp.user_id
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE f.follower_id = #{userId}
+            AND fp.public_status IS TRUE
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        ORDER BY fp.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
     <select id="getBookmarkPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
         SELECT 
             fp.id, fi.photo_url,
@@ -77,6 +100,7 @@
         LEFT JOIN city ci
             ON ci.id = fp.city_id
         WHERE fb.user_id = #{userId}
+            AND fp.public_status IS TRUE
             AND fp.blind_status = 'VISIBLE'
             AND fi.display_order = 1
         ORDER BY fb.bookmarked_at DESC

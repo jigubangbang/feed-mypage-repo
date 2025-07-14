@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.jigubangbang.mypage_service.mapper.MapMapper;
 import com.jigubangbang.mypage_service.model.CityDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
+import com.jigubangbang.mypage_service.model.CountryVisitBasicDto;
 import com.jigubangbang.mypage_service.model.CountryVisitDto;
 import com.jigubangbang.mypage_service.model.CountryWishDto;
 import com.jigubangbang.mypage_service.model.FeedPostDto;
@@ -18,6 +19,10 @@ import com.jigubangbang.mypage_service.model.FeedPostDto;
 public class MapService {
     @Autowired
     private MapMapper mapMapper;
+
+    public String getMapInfo(String userId) {
+        return mapMapper.getMapInfo(userId);
+    }
 
     public List<CountryDto> getCountryList(String userId, String keyword) {
         Map<String, Object> map = new HashMap<>();
@@ -31,6 +36,10 @@ public class MapService {
         map.put("userId", userId);
         map.put("continent", continent);
         return mapMapper.getVisitedCountries(map);
+    }
+
+    public List<CountryVisitBasicDto> getBasicVisitedCountries(String userId) {
+        return mapMapper.getBasicVisitedCountries(userId);
     }
 
     public List<CountryVisitDto> getWishlistCountries(String userId) {

@@ -7,14 +7,17 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.jigubangbang.mypage_service.model.CityDto;
 import com.jigubangbang.mypage_service.model.CountryDto;
+import com.jigubangbang.mypage_service.model.CountryVisitBasicDto;
 import com.jigubangbang.mypage_service.model.CountryVisitDto;
 import com.jigubangbang.mypage_service.model.CountryWishDto;
 import com.jigubangbang.mypage_service.model.FeedPostDto;
 
 @Mapper
 public interface MapMapper {
+    public String getMapInfo(String userId);
     public List<CountryDto> getCountryList(Map<String, Object> map);
     public List<CountryVisitDto> getVisitedCountries(Map<String, Object> map);
+    public List<CountryVisitBasicDto> getBasicVisitedCountries(String userId);
     public List<CountryVisitDto> getWishlistCountries(String userId);
     public List<Map<String, Object>> getVisitedCountPerContinent(String userId);
     public List<Map<String, Object>> getTotalCountPerContinent();
