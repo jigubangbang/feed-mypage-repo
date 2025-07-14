@@ -129,4 +129,12 @@
         SELECT is_premium
         FROM user WHERE user_id = #{userId}
     </select>
+    <select id="getPinnedBadge" parameterType="String" resultType="com.jigubangbang.mypage_service.model.BadgeDto">
+        SELECT b.id, b.icon, b.kor_title AS title
+        FROM badge b
+        LEFT JOIN badge_user bu
+            ON bu.badge_id = b.id
+        WHERE bu.user_id = #{userId}
+            AND bu.is_displayed IS TRUE
+    </select>
 </mapper>

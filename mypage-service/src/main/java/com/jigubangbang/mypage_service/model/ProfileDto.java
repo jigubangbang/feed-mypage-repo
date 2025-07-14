@@ -28,4 +28,6 @@ public class ProfileDto {
     private int countryVisitCount;
     private String formattedDate;
     private boolean followStatus;
+
+    private BadgeDto badge;
 }

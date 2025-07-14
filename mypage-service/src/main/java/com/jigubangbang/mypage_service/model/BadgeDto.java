@@ -8,6 +8,7 @@ import lombok.Setter;
 public class BadgeDto {
     private int id;
     private String icon;
+    private String title;
 
     private boolean acquiredStatus;
 }

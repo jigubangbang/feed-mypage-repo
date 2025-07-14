@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.mypage_service.chat_service.NotificationServiceClient;
+import com.jigubangbang.mypage_service.model.BadgeDto;
 import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
@@ -47,6 +48,8 @@ public class ProfileController {
     @GetMapping("/{userId}")
     public ProfileDto getProfile(@PathVariable String userId, @RequestHeader("User-Id") String sessionUserId) {
         ProfileDto profileDto = profileService.getProfileDto(userId);
+        BadgeDto badge = profileService.getPinnedBadge(userId);
+        profileDto.setBadge(badge);
         
         boolean followStatus = profileService.getFollowStatus(sessionUserId, userId);
         profileDto.setFollowStatus(followStatus);

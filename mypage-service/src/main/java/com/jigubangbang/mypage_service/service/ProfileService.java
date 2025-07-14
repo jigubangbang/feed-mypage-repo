@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.jigubangbang.mypage_service.mapper.ProfileMapper;
 import com.jigubangbang.mypage_service.model.BadgeDto;
-import com.jigubangbang.mypage_service.model.BadgeUserDto;
 import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
@@ -141,5 +140,9 @@ public class ProfileService {
 
     public boolean isUserPremium(String userId) {
         return profileMapper.isUserPremium(userId);
+    }
+
+    public BadgeDto getPinnedBadge(String userId) {
+        return profileMapper.getPinnedBadge(userId);
     }
 }

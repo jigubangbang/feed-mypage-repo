@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.jigubangbang.mypage_service.model.BadgeDto;
-import com.jigubangbang.mypage_service.model.BadgeUserDto;
 import com.jigubangbang.mypage_service.model.BioRequestDto;
 import com.jigubangbang.mypage_service.model.CountryFavDto;
 import com.jigubangbang.mypage_service.model.LanguageDto;
@@ -41,4 +40,5 @@ public interface ProfileMapper {
     public int updateLanguage(LanguageUserDto dto);
     public int getIdByLanguageUser(Map<String, Object> map);
     public boolean isUserPremium(String userId);
+    public BadgeDto getPinnedBadge(String userId);
 }
