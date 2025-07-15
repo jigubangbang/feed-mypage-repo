@@ -11,6 +11,10 @@
         SELECT nickname
         FROM user WHERE user_id = #{userId}
     </select>
+    <select id="getUserStyleById" parameterType="String" resultType="String">
+        SELECT travel_style_id
+        FROM user WHERE user_id = #{userId}
+    </select>
     <select id="getFriendRecommendations" parameterType="map" resultType="com.jigubangbang.feed_service.model.UserDto">
         SELECT 
             u.user_id,

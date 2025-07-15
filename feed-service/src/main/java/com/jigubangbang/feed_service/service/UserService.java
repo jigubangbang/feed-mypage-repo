@@ -21,6 +21,10 @@ public class UserService {
         return userMapper.getUserNicknameById(userId);
     }
 
+    public String getUserStyleById(String userId) {
+        return userMapper.getUserStyleById(userId);
+    }
+
     public List<UserDto> getFriendRecommendations(String userId, int limit, int offset) {
         return userMapper.getFriendRecommendations(userId, limit, offset);
     }

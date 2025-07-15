@@ -48,7 +48,12 @@ public class UserFeedController {
             @RequestParam("limit") int limit,
             @RequestParam("offset") int offset) {
         List<UserDto> users = userService.getFriendRecommendations(userId, limit, offset);
-        return ResponseEntity.ok(Map.of("users", users));
+        String travelStyleId = userService.getUserStyleById(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", users);
+        response.put("travelStyleId", travelStyleId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search/users")

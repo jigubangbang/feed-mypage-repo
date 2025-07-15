@@ -21,7 +21,8 @@
             tsm.partner_travel_style_id,
             tsm.match_status,
             tsm.description,
-            ts.label AS partnerTravelStyleLabel
+            ts.label AS partnerTravelStyleLabel,
+            ts.image
         FROM travel_style_match tsm
         LEFT JOIN travel_style ts
             ON ts.id = tsm.partner_travel_style_id
@@ -33,7 +34,8 @@
             tsm.partner_travel_style_id,
             tsm.match_status,
             tsm.description,
-            ts.label AS partnerTravelStyleLabel
+            ts.label AS partnerTravelStyleLabel,
+            ts.image
         FROM travel_style_match tsm
         LEFT JOIN travel_style ts
             ON ts.id = tsm.partner_travel_style_id

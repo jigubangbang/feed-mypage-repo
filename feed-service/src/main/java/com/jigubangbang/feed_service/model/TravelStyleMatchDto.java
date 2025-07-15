@@ -10,4 +10,5 @@ public class TravelStyleMatchDto {
     private String partnerTravelStyleLabel;
     private boolean matchStatus;
     private String description;
+    private String image;
 }
