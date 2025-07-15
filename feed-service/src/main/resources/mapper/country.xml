@@ -10,6 +10,14 @@
         SELECT * from city
         WHERE country_id = #{countryId}
     </select>
+    <select id="getCountryNameById" resultType="string" parameterType="string">
+        SELECT name from country
+        WHERE id = #{id}
+    </select>
+    <select id="getCityNameById" resultType="string" parameterType="int">
+        SELECT city_name from city
+        WHERE id = #{id}
+    </select>
     <select id="getRankedCountries" resultType="com.jigubangbang.feed_service.model.CountryDto" parameterType="int">
         SELECT 
             c.id,

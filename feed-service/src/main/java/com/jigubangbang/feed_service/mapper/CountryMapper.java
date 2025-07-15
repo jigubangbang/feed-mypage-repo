@@ -11,5 +11,7 @@ import com.jigubangbang.feed_service.model.CountryDto;
 public interface CountryMapper {
     public List<CountryDto> getAllCountries();
     public List<CityDto> getCityByCountry(String countryId);
+    public String getCountryNameById(String id);
+    public String getCityNameById(int id);
     public List<CountryDto> getRankedCountries(int limit);
 }

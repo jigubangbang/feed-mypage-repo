@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.feed_service.chat_service.NotificationServiceClient;
+import com.jigubangbang.feed_service.mapper.CountryMapper;
 import com.jigubangbang.feed_service.model.CommentDto;
 import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;
 import com.jigubangbang.feed_service.model.PostDto;
 import com.jigubangbang.feed_service.model.chat_service.FeedNotificationRequestDto;
 import com.jigubangbang.feed_service.service.CommentService;
+import com.jigubangbang.feed_service.service.CountryService;
 import com.jigubangbang.feed_service.service.FeedService;
 import com.jigubangbang.feed_service.service.S3Service;
 import com.jigubangbang.feed_service.service.UserService;
@@ -44,6 +46,9 @@ public class FeedController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private CountryService countryService;
 
     @Autowired
     private NotificationServiceClient notificationClient;
@@ -97,7 +102,14 @@ public class FeedController {
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Post created successfully");
-            response.put("id", dto.getId());
+            int id = dto.getId();
+            response.put("id", id);
+
+            FeedDto post = new FeedDto();
+            post.setId(id);
+            post.setCountryName(countryService.getCountryNameById(dto.getCountryId()));
+            post.setCityName(countryService.getCityNameById(dto.getCityId()));
+            response.put("post", post);
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

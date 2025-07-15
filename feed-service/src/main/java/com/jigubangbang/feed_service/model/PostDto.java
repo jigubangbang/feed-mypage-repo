@@ -13,7 +13,7 @@ public class PostDto {
     private String userId;
     private String countryId;
     private String countryName;
-    private String cityId;
+    private int cityId;
     private String cityName;
     private String title;
     private Timestamp startDate;

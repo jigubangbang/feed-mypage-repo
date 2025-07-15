@@ -22,6 +22,14 @@ public class CountryService {
         return countryMapper.getCityByCountry(countryId);
     }
 
+    public String getCountryNameById(String id) {
+        return countryMapper.getCountryNameById(id);
+    }
+
+    public String getCityNameById(int id) {
+        return countryMapper.getCityNameById(id);
+    }
+
     public List<CountryDto> getRankedCountries(int limit) {
         return countryMapper.getRankedCountries(limit);
     }

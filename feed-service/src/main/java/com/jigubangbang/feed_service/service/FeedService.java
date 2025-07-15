@@ -176,6 +176,7 @@ public class FeedService {
     }
 
     public List<String> extractHashtags(String content) {
+        if (content == null) return new ArrayList<>();
         Pattern pattern = Pattern.compile("#([\\w가-힣]+)");
         Matcher matcher = pattern.matcher(content);
         Set<String> hashtags = new HashSet<>();
