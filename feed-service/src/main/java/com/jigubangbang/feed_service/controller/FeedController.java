@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jigubangbang.feed_service.chat_service.NotificationServiceClient;
-import com.jigubangbang.feed_service.mapper.CountryMapper;
 import com.jigubangbang.feed_service.model.CommentDto;
 import com.jigubangbang.feed_service.model.FeedDto;
 import com.jigubangbang.feed_service.model.FeedImageDto;

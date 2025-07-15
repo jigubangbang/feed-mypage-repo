@@ -27,8 +27,7 @@
             AND fp.city_id = #{cityId}
         </if>
         <if test="startDate != null and endDate != null">
-            AND (#{startDate} BETWEEN fp.start_date AND fp.end_date
-            OR #{endDate} BETWEEN fp.start_date AND fp.end_date)
+            AND NOT (fp.end_date &lt; #{startDate} OR fp.start_date &gt; #{endDate})
         </if>
         <choose>
             <when test="sort != null and sort.equals('like')">
