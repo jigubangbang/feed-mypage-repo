@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -137,13 +138,12 @@ public class MapController {
     }
 
     @GetMapping("/{userId}/countries/{countryId}")
-    public ResponseEntity<Map<String, Object>> getCountryFeed(@PathVariable String countryId) {
-        
-        List<FeedPostDto> feedPosts = mapService.getCountryFeed("jigubang", countryId);
+    public ResponseEntity<Map<String, Object>> getCountryFeed(@RequestHeader("User-Id") String userId, @PathVariable String countryId) {
+        List<FeedPostDto> posts = mapService.getCountryFeed(userId, countryId);
         Map<String, Object> response = new HashMap<>();
-        response.put("totalItems", feedPosts.size());
+        response.put("totalItems", posts.size());
         response.put("countryId", countryId);
-        response.put("posts", feedPosts);
+        response.put("posts", posts);
 
         return ResponseEntity.ok(response);
     }

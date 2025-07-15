@@ -200,11 +200,9 @@
         INSERT INTO feed_image (feed_id, photo_url, display_order)
         VALUES (#{feedId}, #{photoUrl}, #{displayOrder})
     </insert>
-    <update id="deletePost" parameterType="int">
-        UPDATE feed_post
-        SET blind_status = "BLINDED"
-        WHERE id = #{id}
-    </update>
+    <delete id="deletePost" parameterType="int">
+        DELETE FROM feed_post WHERE id = #{id}
+    </delete>
     <update id="updatePost" parameterType="com.jigubangbang.feed_service.model.PostDto">
         UPDATE feed_post
         SET title = #{title}

@@ -119,6 +119,7 @@
         WHERE fp.country_id = #{countryId}
             AND fp.user_id = #{userId}
             AND fp.blind_status = "VISIBLE"
+            AND fi.display_order = 1
     </select>
     <update id="changeMapColor" parameterType="map">
         UPDATE user
