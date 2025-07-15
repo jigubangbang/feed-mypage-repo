@@ -31,7 +31,10 @@
         UPDATE bucketlist
         SET 
             completion_status = NOT completion_status,
-            completed_at = CURRENT_TIMESTAMP
+            completed_at = CASE 
+                WHEN completed_at IS NULL THEN CURRENT_TIMESTAMP
+                ELSE completed_at
+            END
         WHERE id = #{id}
     </update>
     <update id="updateDisplayOrder" parameterType="com.jigubangbang.mypage_service.model.BucketlistDto">
