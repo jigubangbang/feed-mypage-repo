@@ -14,6 +14,7 @@ import com.jigubangbang.feed_service.model.PostDto;
 public interface FeedMapper {
     public List<FeedDto> getPosts(FeedFilterDto filter);
     public List<FeedDto> getUserPosts(Map<String, Object> map);
+    public List<FeedDto> getPublicUserPosts(Map<String, Object> map);
     public List<FeedDto> getFollowingPosts(Map<String, Object> map);
     public List<FeedDto> getBookmarkPosts(Map<String, Object> map);
     public List<PostDto> getTopPosts(int limit);

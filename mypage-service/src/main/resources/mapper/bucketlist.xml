@@ -50,4 +50,8 @@
         SELECT COUNT(*) FROM bucketlist
         WHERE NOT completion_status AND user_id = #{userId}
     </select>
+    <select id="getCompletedDate" parameterType="int">
+        SELECT completed_at FROM bucketlist
+        WHERE id = #{id}
+    </select>
 </mapper>

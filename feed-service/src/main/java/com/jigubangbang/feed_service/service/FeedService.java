@@ -41,6 +41,14 @@ public class FeedService {
         return feedMapper.getUserPosts(map);
     }
 
+    public List<FeedDto> getPublicUserPosts(String userId, int pageSize, int offset) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("pageSize", pageSize);
+        map.put("offset", offset);
+        return feedMapper.getPublicUserPosts(map);
+    }
+
     public List<FeedDto> getFollowingPosts(String userId, int pageSize, int offset) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);

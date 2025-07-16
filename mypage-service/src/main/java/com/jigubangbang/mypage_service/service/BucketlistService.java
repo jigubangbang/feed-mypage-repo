@@ -1,5 +1,6 @@
 package com.jigubangbang.mypage_service.service;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,5 +48,9 @@ public class BucketlistService {
 
     public int getIncompleteItemsCount(String userId) {
         return bucketlistMapper.getIncompleteItemsCount(userId);
+    }
+
+    public Timestamp getCompletedDate(int id) {
+        return bucketlistMapper.getCompletedDate(id);
     }
 }

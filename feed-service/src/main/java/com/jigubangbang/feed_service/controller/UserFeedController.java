@@ -1,5 +1,6 @@
 package com.jigubangbang.feed_service.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +31,17 @@ public class UserFeedController {
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<Map<String, Object>> getUserPosts(
+            @RequestHeader("User-Id") String sessionUserId,
             @PathVariable String userId,
             @RequestParam int pageSize,
             @RequestParam int offset) {
-        List<FeedDto> posts = feedService.getUserPosts(userId, pageSize, offset);
+        List<FeedDto> posts = new ArrayList<>();
+        if (sessionUserId.equals(userId)) {
+            posts = feedService.getUserPosts(userId, pageSize, offset);
+        } else {
+            posts = feedService.getPublicUserPosts(userId, pageSize, offset);
+        }
+        
         Map<String, Object> response = new HashMap<>();
         response.put("userId", userId);
         response.put("totalItems", posts.size());

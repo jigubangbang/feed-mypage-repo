@@ -1,5 +1,6 @@
 package com.jigubangbang.mypage_service.controller;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,8 @@ public class BucketlistController {
         if (success) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Updated status successfully");
+            Timestamp date = bucketlistService.getCompletedDate(goalId);
+            response.put("completedAt", (DateUtils.formatToKoreanDate(date)));
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
