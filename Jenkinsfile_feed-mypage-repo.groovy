@@ -30,7 +30,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'deployAWS', credentialsId: 'github-feed-mypage-pat', url: 'https://github.com/jigubangbang/feed-mypage-repo.git'
+                git branch: 'deployAWS2', credentialsId: 'github-feed-mypage-pat', url: 'https://github.com/jigubangbang/feed-mypage-repo.git'
             }
         }
 
