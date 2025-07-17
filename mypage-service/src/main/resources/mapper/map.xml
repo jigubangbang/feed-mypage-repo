@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.mypage_service.mapper.MapMapper">
+    <select id="getMapInfo" resultType="string" parameterType="string">
+        SELECT map_color FROM user
+        WHERE user_id = #{userId}
+    </select>
+    <select id="getCountryList" resultType="com.jigubangbang.mypage_service.model.CountryDto" parameterType="map">
+        SELECT
+            c.id,
+            c.name,
+            c.continent,
+            cv.user_id IS NOT NULL AS visitStatus,
+            cw.user_id IS NOT NULL AS wishStatus,
+            cf.user_id IS NOT NULL as favStatus
+        FROM country c
+        LEFT JOIN country_visit cv
+            ON c.id = cv.country_id AND cv.user_id = #{userId}
+        LEFT JOIN country_wish cw
+            ON c.id = cw.country_id AND cw.user_id = #{userId}
+        LEFT JOIN country_fav cf
+            ON c.id = cf.country_id AND cf.user_id = #{userId}
+        <where>
+            <if test="keyword != null and keyword != ''">
+                name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="getCityList" resultType="com.jigubangbang.mypage_service.model.CityDto" parameterType="String">
+        SELECT * FROM city
+        WHERE country_id = #{countryId}
+    </select>
+    <select id="getVisitedCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitDto" parameterType="map">
+        SELECT cv.id, cv.user_id, cv.country_id, cv.start_date, cv.end_date, c.name
+        FROM country_visit cv
+        JOIN country c ON c.id = cv.country_id
+        WHERE user_id = #{userId}
+        <if test="continent != null and continent != ''">
+            AND c.continent = #{continent}
+        </if>
+    </select>
+    <select id="getBasicVisitedCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitBasicDto" parameterType="String">
+        SELECT id, country_id FROM country_visit
+        WHERE user_id = #{userId}
+    </select>
+    <select id="getWishlistCountries" resultType="com.jigubangbang.mypage_service.model.CountryVisitDto" parameterType="String">
+        SELECT * FROM country_wish
+        WHERE user_id = #{userId}
+    </select>
+    <select id="getVisitedCountPerContinent" resultType="map" parameterType="String">
+        SELECT c.continent, COUNT(*) AS visitedCount
+        FROM country_visit cv
+        JOIN country c ON c.id = cv.country_id
+        WHERE cv.user_id = #{userId}
+        GROUP BY c.continent
+    </select>
+    <select id="getTotalCountPerContinent" resultType="map">
+        SELECT continent, COUNT(*) AS totalCount
+        FROM country
+        GROUP BY continent
+    </select>
+    <select id="getTotalCountriesCount" resultType="int">
+        SELECT COUNT(*) FROM country
+    </select>
+    <select id="getUserVisitedCount" parameterType="String">
+        SELECT COUNT(*)
+        FROM country_visit
+        WHERE user_id = #{userId}
+    </select>
+    <select id="getUserVisitPercentile" parameterType="String" resultType="double">
+        SELECT
+            100.0 * (
+                SELECT COUNT(DISTINCT user_id)
+                FROM (
+                    SELECT user_id, COUNT(*) AS cnt
+                    FROM country_visit
+                    GROUP BY user_id
+                    HAVING cnt &lt;= (
+                        SELECT COUNT(*) FROM country_visit WHERE user_id = #{userId}
+                    )
+                ) AS ranking
+            ) / (
+                SELECT COUNT(DISTINCT user_id) FROM country_visit
+            ) AS percentile
+    </select>
+    <insert id="addVisitCountry" parameterType="com.jigubangbang.mypage_service.model.CountryVisitDto">
+        INSERT INTO country_visit (user_id, country_id, start_date, end_date)
+        VALUES (
+            #{userId}, 
+            #{countryId}, 
+            COALESCE(#{startDate}, CURRENT_TIMESTAMP), 
+            COALESCE(#{endDate}, CURRENT_TIMESTAMP)
+        )
+    </insert>
+    <delete id="removeVisitCountry" parameterType="map">
+        DELETE FROM country_visit
+        WHERE user_id = #{userId}
+        AND country_id = #{countryId}
+    </delete>
+    <insert id="addWishlistCountry" parameterType="com.jigubangbang.mypage_service.model.CountryWishDto">
+        INSERT INTO country_wish (user_id, country_id)
+        VALUES (#{userId}, #{countryId})
+    </insert>
+    <delete id="removeWishlistCountry" parameterType="map">
+        DELETE FROM country_wish
+        WHERE user_id = #{userId}
+        AND country_id = #{countryId}
+    </delete>
+    <select id="getCountryFeed" resultType="com.jigubangbang.mypage_service.model.FeedPostDto" parameterType="map">
+        SELECT 
+            fp.id, fp.country_id, 
+            fp.city_id, fp.title, fp.created_at, 
+            fi.photo_url AS thumbnail
+        FROM feed_post fp
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        WHERE fp.country_id = #{countryId}
+            AND fp.user_id = #{userId}
+            AND fp.blind_status = "VISIBLE"
+            AND fi.display_order = 1
+    </select>
+    <update id="changeMapColor" parameterType="map">
+        UPDATE user
+        SET map_color = #{mapColor}
+        WHERE user_id = #{userId}
+    </update>
+</mapper>

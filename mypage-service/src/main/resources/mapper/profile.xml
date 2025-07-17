@@ -12,6 +12,21 @@
         FROM user
         WHERE user_id = #{userId}
     </select>
+    <update id="updateProfileImage" parameterType="map">
+        UPDATE user
+        SET profile_image = #{profileImage}
+        WHERE user_id = #{userId}
+    </update>
+    <update id="updateBio" parameterType="com.jigubangbang.mypage_service.model.BioRequestDto">
+        UPDATE user
+        SET bio = #{bio}
+        WHERE user_id = #{userId}
+    </update>
+    <update id="updateNationality" parameterType="com.jigubangbang.mypage_service.model.ProfileDto">
+        UPDATE user
+        SET nationality = #{nationality}
+        WHERE user_id = #{userId}
+    </update>
     <select id="getCountryName" resultType="String" parameterType="String">
         SELECT name
         FROM country
@@ -54,4 +69,72 @@
         WHERE follower_id = #{followerId}
         AND following_id = #{followingId}
     </delete>
+    <select id="getFavCountries" resultType="com.jigubangbang.mypage_service.model.CountryFavDto" parameterType="String">
+        SELECT cf.id, cf.country_id, c.name, cf.country_rank, cf.user_id
+        FROM country_fav cf
+        JOIN country c on cf.country_id = c.id
+        WHERE cf.user_id = #{userId}
+        ORDER BY cf.country_rank ASC
+    </select>
+    <delete id="deleteFavCountriesByUserId" parameterType="string">
+        DELETE FROM country_fav WHERE user_id = #{userId}
+    </delete>
+    <insert id="insertFavCountries">
+        INSERT INTO country_fav (user_id, country_id, country_rank)
+        VALUES
+        <foreach collection="favCountries" item="country" separator=",">
+            (#{userId}, #{country.countryId}, #{country.countryRank})
+        </foreach>
+    </insert>
+    <select id="getLanguageList" resultType="com.jigubangbang.mypage_service.model.LanguageDto" parameterType="map">
+        SELECT
+            l.id,
+            l.name,
+            lu.user_id IS NOT NULL AS addStatus
+        FROM language l
+        LEFT JOIN language_user lu
+            ON l.id = lu.language_id AND lu.user_id = #{userId}
+        <where>
+            <if test="keyword != null and keyword != ''">
+                name LIKE CONCAT ('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY l.name ASC
+    </select>
+    <select id="getUserLanguages" resultType="com.jigubangbang.mypage_service.model.LanguageUserDto" parameterType="String">
+        SELECT lu.id, lu.language_id, l.name, lu.proficiency
+        FROM language_user lu
+        JOIN language l on l.id = lu.language_id
+        WHERE lu.user_id = #{userId}
+    </select>
+    <select id="getIdByLanguageUser" parameterType="map">
+        SELECT id FROM language_user
+        WHERE user_id = #{userId}
+        AND language_id = #{languageId}
+    </select>
+    <insert id="addLanguage" parameterType="com.jigubangbang.mypage_service.model.LanguageUserDto">
+        INSERT INTO language_user (user_id, language_id, proficiency)
+        VALUES (#{userId}, #{languageId}, #{proficiency})
+    </insert>
+    <delete id="removeLanguage" parameterType="int">
+        DELETE FROM language_user
+        WHERE id = #{id}
+    </delete>
+    <update id="updateLanguage" parameterType="com.jigubangbang.mypage_service.model.LanguageUserDto">
+        UPDATE language_user
+        SET proficiency = #{proficiency}
+        WHERE id=#{id}
+    </update>
+    <select id="isUserPremium" parameterType="String" resultType="boolean">
+        SELECT is_premium
+        FROM user WHERE user_id = #{userId}
+    </select>
+    <select id="getPinnedBadge" parameterType="String" resultType="com.jigubangbang.mypage_service.model.BadgeDto">
+        SELECT b.id, b.icon, b.kor_title AS title
+        FROM badge b
+        LEFT JOIN badge_user bu
+            ON bu.badge_id = b.id
+        WHERE bu.user_id = #{userId}
+            AND bu.is_displayed IS TRUE
+    </select>
 </mapper>

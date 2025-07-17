@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.feed_service.mapper.FeedMapper">
+    <select id="getPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="com.jigubangbang.feed_service.model.FeedFilterDto">
+        SELECT
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.public_status IS TRUE
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        <if test="countryId != null">
+            AND fp.country_id = #{countryId}
+        </if>
+        <if test="cityId != null">
+            AND fp.city_id = #{cityId}
+        </if>
+        <if test="startDate != null and endDate != null">
+            AND NOT (fp.end_date &lt; #{startDate} OR fp.start_date &gt; #{endDate})
+        </if>
+        <choose>
+            <when test="sort != null and sort.equals('like')">
+                ORDER BY like_count DESC
+            </when>
+            <otherwise>
+                ORDER BY fp.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getUserPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
+        SELECT 
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.user_id = #{userId}
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        ORDER BY fp.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getPublicUserPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
+        SELECT 
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.user_id = #{userId}
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+            AND fp.public_status IS TRUE
+        ORDER BY fp.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getFollowingPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
+        SELECT 
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN follow f
+            ON f.following_id = fp.user_id
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE f.follower_id = #{userId}
+            AND fp.public_status IS TRUE
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        ORDER BY fp.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getBookmarkPosts" resultType="com.jigubangbang.feed_service.model.FeedDto" parameterType="map">
+        SELECT 
+            fp.id, fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        INNER JOIN feed_bookmark fb
+            ON fb.feed_id = fp.id
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fb.user_id = #{userId}
+            AND fp.public_status IS TRUE
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        ORDER BY fb.bookmarked_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getTopPosts" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="map">
+        SELECT 
+            fp.id, 
+            u.nickname, u.profile_image,
+            fi.photo_url,
+            c.name AS country_name,
+            ci.city_name,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count
+        FROM feed_post fp
+        LEFT JOIN user u
+            ON u.user_id = fp.user_id
+        LEFT JOIN feed_image fi
+            ON fi.feed_id = fp.id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.public_status IS TRUE
+            AND fp.blind_status = 'VISIBLE'
+            AND fi.display_order = 1
+        ORDER BY like_count DESC
+        LIMIT #{limit}
+    </select>
+    <select id="getPostDetail" resultType="com.jigubangbang.feed_service.model.PostDto" parameterType="int">
+        SELECT
+            fp.id,
+            fp.user_id,
+            c.name AS country_name,
+            ci.city_name,
+            fp.title,
+            fp.start_date,
+            fp.end_date,
+            fp.public_status,
+            u.nickname,
+            u.profile_image,
+            (SELECT COUNT(*) FROM feed_like WHERE feed_id = fp.id) AS like_count,
+            (SELECT COUNT(*) FROM feed_comment WHERE feed_id = fp.id) AS comment_count
+        FROM feed_post fp
+        LEFT JOIN user u
+            ON fp.user_id = u.user_id
+        LEFT JOIN country c
+            ON c.id = fp.country_id
+        LEFT JOIN city ci
+            ON ci.id = fp.city_id
+        WHERE fp.id = #{id}
+    </select>
+    <select id="getPostUserById" resultType="String" parameterType="int">
+        SELECT user_id FROM feed_post
+        WHERE id = #{id}
+    </select> 
+    <select id="getPostImages" resultType="com.jigubangbang.feed_service.model.FeedImageDto" parameterType="int">
+        SELECT * FROM feed_image
+        WHERE feed_id = #{feedId}
+        ORDER BY display_order ASC
+    </select>
+    <select id="getPostLikeStatus" parameterType="map">
+        SELECT COUNT(*) FROM feed_like
+        WHERE user_id = #{userId}
+        AND feed_id = #{feedId}
+    </select>
+    <select id="getPostBookmarkStatus" parameterType="map">
+        SELECT COUNT(*) FROM feed_bookmark
+        WHERE user_id = #{userId}
+        AND feed_id = #{feedId}
+    </select>
+    <insert id="addPost" parameterType="com.jigubangbang.feed_service.model.PostDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO feed_post (user_id, country_id, city_id, title, start_date, end_date, public_status)
+        VALUES (
+            #{userId},
+            #{countryId},
+            #{cityId},
+            #{title}, 
+            COALESCE (#{startDate}, CURRENT_TIMESTAMP),
+            COALESCE (#{endDate}, CURRENT_TIMESTAMP),
+            #{publicStatus}
+        );
+    </insert>
+    <insert id="addVisitCountry" parameterType="com.jigubangbang.feed_service.model.PostDto">
+        INSERT INTO country_visit (user_id, country_id, start_date, end_date)
+        SELECT * FROM (
+            SELECT
+                #{userId},
+                #{countryId},
+                COALESCE(#{startDate}, CURRENT_TIMESTAMP) AS start_date,
+                COALESCE(#{endDate}, CURRENT_TIMESTAMP) AS end_date
+        ) AS tmp
+        WHERE NOT EXISTS (
+            SELECT 1 FROM country_visit WHERE user_id = #{userId} AND country_id = #{countryId}
+        )
+    </insert>
+    <insert id="addPostImage" parameterType="com.jigubangbang.feed_service.model.FeedImageDto">
+        INSERT INTO feed_image (feed_id, photo_url, display_order)
+        VALUES (#{feedId}, #{photoUrl}, #{displayOrder})
+    </insert>
+    <delete id="deletePost" parameterType="int">
+        DELETE FROM feed_post WHERE id = #{id}
+    </delete>
+    <update id="updatePost" parameterType="com.jigubangbang.feed_service.model.PostDto">
+        UPDATE feed_post
+        SET title = #{title}
+        WHERE id = #{id}
+    </update>
+    <update id="updatePublicStatus" parameterType="map">
+        UPDATE feed_post
+        SET public_status = #{publicStatus}
+        WHERE id = #{id}
+    </update>
+    <insert id="likePost" parameterType="map">
+        INSERT INTO feed_like (feed_id, user_id)
+        VALUES (#{feedId}, #{userId})
+    </insert>
+    <delete id="unlikePost" parameterType="map">
+        DELETE FROM feed_like
+        WHERE feed_id = #{feedId}
+        AND user_id = #{userId}
+    </delete>
+    <insert id="bookmarkPost" parameterType="map">
+        INSERT INTO feed_bookmark (feed_id, user_id)
+        VALUES (#{feedId}, #{userId})
+    </insert>
+    <delete id="removeBookmarkPost" parameterType="map">
+        DELETE FROM feed_bookmark
+        WHERE feed_id = #{feedId}
+        AND user_id = #{userId}
+    </delete>
+</mapper>

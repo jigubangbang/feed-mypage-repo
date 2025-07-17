@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.feed_service.mapper.UserMapper">
+    <select id="getUserProfileById" parameterType="String" resultType="String">
+        SELECT profile_image
+        FROM user WHERE user_id = #{userId}
+    </select>
+    <select id="getUserNicknameById" parameterType="String" resultType="String">
+        SELECT nickname
+        FROM user WHERE user_id = #{userId}
+    </select>
+    <select id="getUserStyleById" parameterType="String" resultType="String">
+        SELECT travel_style_id
+        FROM user WHERE user_id = #{userId}
+    </select>
+    <select id="getFriendRecommendations" parameterType="map" resultType="com.jigubangbang.feed_service.model.UserDto">
+        SELECT 
+            u.user_id,
+            u.nickname,
+            u.is_premium,
+            u.profile_image,
+            u.bio,
+            u.nationality,
+            u.travel_style_id,
+            ts.label AS travelStyleLabel
+        FROM user u
+        LEFT JOIN travel_style ts
+            ON ts.id = u.travel_style_id
+        WHERE (
+            u.travel_style_id = (SELECT travel_style_id FROM user WHERE user_id = #{userId})
+            OR u.travel_style_id IN (
+                SELECT partner_travel_style_id
+                FROM travel_style_match
+                WHERE travel_style_id = (SELECT travel_style_id FROM user WHERE user_id = #{userId})
+                AND match_status IS TRUE
+            )
+        )
+        AND u.user_id != #{userId}
+        AND u.user_status = 'ACTIVE'
+        AND u.role = 'ROLE_USER'
+        AND NOT EXISTS (
+            SELECT 1
+            FROM follow f
+            WHERE f.follower_id = #{userId} AND f.following_id = u.user_id
+        )
+        ORDER BY u.created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="getUserByKeyword" parameterType="map" resultType="com.jigubangbang.feed_service.model.SearchUserDto">
+        SELECT
+            u.user_id, u.nickname, u.is_premium, u.profile_image,
+            (SELECT COUNT(*) FROM follow WHERE follower_id=u.user_id) AS followingCount,
+            (SELECT COUNT(*) FROM follow WHERE following_id=u.user_id) AS followerCount,
+            (SELECT COUNT(*) FROM country_visit WHERE user_id=u.user_id) AS countryVisitCount
+        FROM user u
+        WHERE ((u.user_id LIKE CONCAT('%', #{keyword}, '%'))
+        OR (u.nickname LIKE CONCAT('%', #{keyword}, '%')))
+            AND u.user_status = 'ACTIVE'
+            AND u.role = 'ROLE_USER'
+        LIMIT #{limit}
+    </select>
+</mapper>

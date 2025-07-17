@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@MapperScan(basePackages = "com.jigubangbang.feed_service.mapper")
 @EnableFeignClients
+@MapperScan(basePackages = "com.jigubangbang.feed_service.mapper")
 public class FeedServiceApplication {
 
 	public static void main(String[] args) {

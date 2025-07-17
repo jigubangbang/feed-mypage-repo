@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigubangbang.feed_service.mapper.StyleMapper">
+    <update id="updateUserStyle" parameterType="map">
+        UPDATE user
+        SET travel_style_id = #{travelStyleId}
+        WHERE user_id = #{userId}
+    </update>
+    <select id="getStyleList" resultType="com.jigubangbang.feed_service.model.TravelStyleBasicDto">
+        SELECT id, label
+        FROM travel_style 
+    </select>
+    <select id="getStyleDetail" resultType="com.jigubangbang.feed_service.model.TravelStyleDto" parameterType="string">
+        SELECT * FROM travel_style
+        WHERE id=#{id}
+    </select>
+    <select id="getCompatibleStyles" resultType="com.jigubangbang.feed_service.model.TravelStyleMatchDto" parameterType="string">
+        SELECT
+            tsm.partner_travel_style_id,
+            tsm.match_status,
+            tsm.description,
+            ts.label AS partnerTravelStyleLabel,
+            ts.image
+        FROM travel_style_match tsm
+        LEFT JOIN travel_style ts
+            ON ts.id = tsm.partner_travel_style_id
+        WHERE tsm.travel_style_id = #{travelStyleId}
+        AND tsm.match_status IS TRUE
+    </select>
+    <select id="getIncompatibleStyles" resultType="com.jigubangbang.feed_service.model.TravelStyleMatchDto" parameterType="string">
+        SELECT
+            tsm.partner_travel_style_id,
+            tsm.match_status,
+            tsm.description,
+            ts.label AS partnerTravelStyleLabel,
+            ts.image
+        FROM travel_style_match tsm
+        LEFT JOIN travel_style ts
+            ON ts.id = tsm.partner_travel_style_id
+        WHERE tsm.travel_style_id = #{travelStyleId}
+        AND tsm.match_status IS FALSE
+    </select>
+</mapper>

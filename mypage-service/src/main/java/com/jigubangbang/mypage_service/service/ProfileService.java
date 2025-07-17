@@ -1,6 +1,5 @@
 package com.jigubangbang.mypage_service.service;
 
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jigubangbang.mypage_service.mapper.ProfileMapper;
+import com.jigubangbang.mypage_service.model.BadgeDto;
+import com.jigubangbang.mypage_service.model.BioRequestDto;
+import com.jigubangbang.mypage_service.model.CountryFavDto;
+import com.jigubangbang.mypage_service.model.LanguageDto;
+import com.jigubangbang.mypage_service.model.LanguageUserDto;
 import com.jigubangbang.mypage_service.model.ProfileDto;
 
 @Service
@@ -31,6 +35,25 @@ public class ProfileService {
         }
 
         return profileDto;
+    }
+
+    public String getCountryName(String id) {
+        return profileMapper.getCountryName(id);
+    }
+
+    public boolean updateProfileImage(String userId, String profileImage) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("profileImage", profileImage);
+        return profileMapper.updateProfileImage(map) > 0;
+    }
+
+    public boolean updateBio(BioRequestDto dto) {
+        return profileMapper.updateBio(dto) > 0;
+    }
+
+    public boolean updateNationality(ProfileDto dto) {
+        return profileMapper.updateNationality(dto) > 0;
     }
 
     public boolean updateTravelStatus(String userId, String travelStatus) {
@@ -71,5 +94,55 @@ public class ProfileService {
         map.put("followingId", followingId);
 
         return profileMapper.unfollowUser(map) > 0;
+    }
+
+    public List<CountryFavDto> getFavCountries(String userId) {
+        return profileMapper.getFavCountries(userId);
+    }
+
+    public boolean updateFavCountries(String userId, List<CountryFavDto> favCountries) {
+        profileMapper.deleteFavCountriesByUserId(userId);
+        if (favCountries != null && favCountries.size() > 0) {
+            return profileMapper.insertFavCountries(userId, favCountries) > 0;
+        }
+        return true;
+    }
+
+    public List<LanguageDto> getLanguageList(String userId, String keyword) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("keyword", keyword);
+        return profileMapper.getLanguageList(map);
+    }
+
+    public List<LanguageUserDto> getUserLanguages(String userId) {
+        return profileMapper.getUserLanguages(userId);
+    }
+
+    public boolean addLanguage(LanguageUserDto dto) {
+        return profileMapper.addLanguage(dto) > 0;
+    }
+
+    public boolean removeLanguage(int id) {
+        return profileMapper.removeLanguage(id) > 0;
+    }
+
+    public boolean updateLanguage(LanguageUserDto dto) {
+        return profileMapper.updateLanguage(dto) > 0;
+    }
+
+    public int getIdByLanguageUser(String userId, int languageId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("languageId", languageId);
+        return profileMapper.getIdByLanguageUser(map);
+    }
+
+    public boolean isUserPremium(String userId) {
+        return profileMapper.isUserPremium(userId);
+    }
+
+    public BadgeDto getPinnedBadge(String userId) {
+        return profileMapper.getPinnedBadge(userId);
     }
 }
