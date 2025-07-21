@@ -1,6 +1,7 @@
 package com.jigubangbang.feed_service.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ public class CommentDto {
     private String profileImage;
     private Integer parentCommentId;
     private String content;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
     private String blindStatus;
 
     private boolean likeStatus;
