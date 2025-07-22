@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: feed-mypage-repo
+  namespace: bit-2503
   labels:
     app: feed-mypage-repo
 spec:
