@@ -68,6 +68,38 @@
 | `GET`  | `/public/{userId}/countries/stats` | PUBLIC | 유저의 방문 국가 통계 조회 (총 방문국 수, 대륙별 통계, 백분위) |
 
 
+### 설정
+`application.properties` Configuration
+```properties
+spring.application.name=mypage-service
+server.port=8085
+
+# Config Server
+spring.config.import=configserver:
+spring.cloud.config.discovery.enabled=true
+spring.cloud.config.discovery.service-id=config-server
+
+# Eureka Client
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+eureka.instance.hostname=localhost
+eureka.instance.prefer-ip-address=true
+eureka.instance.instance-id=${spring.application.name}:${random.value}
+eureka.instance.health-check-url-path=/actuator/health
+
+# Actuator
+management.endpoints.web.exposure.include=*
+
+# MyBatis
+mybatis.mapper-locations=classpath:mapper/*.xml
+mybatis.configuration.map-underscore-to-camel-case=true
+
+# AWS S3
+aws.region=ap-northeast-2
+aws.s3.bucket-name=msa-s3-bucket-333
+```
+
 ---
 ## Feed Service
 
@@ -117,8 +149,95 @@
 | `GET`    | `/feed/search/users?keyword={keyword}`                   | PUBLIC  | 키워드 기반 사용자 검색                         |
 
 
+### 설정
+`application.properties` Configuration
+```properties
+spring.application.name=feed-service
+server.port=8084
+
+# Config Server
+spring.config.import=configserver:
+spring.cloud.config.discovery.enabled=true
+spring.cloud.config.discovery.service-id=config-server
+
+# Eureka Client
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+eureka.instance.hostname=localhost
+eureka.instance.prefer-ip-address=true
+eureka.instance.instance-id=${spring.application.name}:${random.value}
+eureka.instance.health-check-url-path=/actuator/health
+
+# MyBatis
+mybatis.mapper-locations=classpath:mapper/*.xml
+mybatis.configuration.map-underscore-to-camel-case=true
+
+# S3 (no secrets included here)
+aws.region=ap-northeast-2  
+aws.s3.bucket-name=msa-s3-bucket-333
+```
+
 
 ---
+## 실행 방법
+
+1.  **Config Server 실행** (8888 포트)
+2.  **Eureka Server 실행** (8761 포트)
+3.  **Chat Service 실행:** 피드 및 팔로우 알림을 위한 Feign Client 의존 서비스입니다.
+4.  **Mypage / Feed Service 실행:**
+```bash
+.mvnw spring-boot:run
+```
+5.  **API Gateway 실행:** 라우팅을 위해 API Gateway를 실행합니다.
+6.  **프론트엔드 실행:** `msa-front` 디렉토리에서 WebSocket을 지원하는 클라이언트를 실행합니다.
+
+
+### 로컬 실행
+#### MyPage Service
+```bash
+# 1. 프로젝트 클론
+git clone https://github.com/jigubangbang/mypage-service.git
+cd mypage-service
+
+# 2. 의존성 설치 및 빌드
+./mvnw clean install
+
+# 3. 애플리케이션 실행  
+./mvnw spring-boot:run
+
+# 4. 서비스 확인
+curl http://localhost:8085/actuator/health
+```
+
+#### Feed Service
+```bash
+# 1. 프로젝트 클론
+git clone https://github.com/jigubangbang/feed-service.git
+cd feed-service
+
+# 2. 의존성 설치 및 빌드
+./mvnw clean install
+
+# 3. 애플리케이션 실행  
+./mvnw spring-boot:run
+
+# 4. 서비스 확인
+curl http://localhost:8084/actuator/health
+```
+
+
+### Docker 실행
+```bash
+# Docker 이미지 빌드
+docker build -t jigubangbang/mypage-service .
+# docker build -t jigubangbang/feed-service .
+
+# 컨테이너 실행
+docker run -p 8085:8085 jigubangbang/mypage-service
+# docker run -p 8084:8084 jigubangbang/feed-service
+```
+
+
+### 
 ## 관련 리포지토리
 
 - **전체 프로젝트**: [Jigubangbang Organization](https://github.com/jigubangbang)
