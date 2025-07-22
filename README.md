@@ -41,7 +41,7 @@
 | `PUT`    | `/profile/{userId}/languages/{id}`                     | PRIVATE | 언어 능력 수정                      |
 | `DELETE` | `/profile/{userId}/languages/{id}`                     | PRIVATE | 언어 삭제                         |
 | `GET`    | `/profile/membership-status`                           | PRIVATE | 프리미엄 회원 여부 확인                 |
-| `GET`    | \`/profile/{userId}/bucketlist?status={completed | incomplete}\` | PUBLIC                                | 사용자 버킷리스트 조회 (전체 / 완료 / 미완료 필터링 가능) |
+| `GET`    | `/profile/{userId}/bucketlist?status={completed \| incomplete}` | PUBLIC                                | 사용자 버킷리스트 조회 (전체 / 완료 / 미완료 필터링 가능) |
 | `POST`   | `/profile/{userId}/bucketlist`                   | PRIVATE       | 버킷리스트 항목 추가                           |
 | `DELETE` | `/profile/{userId}/bucketlist/{goalId}`          | PRIVATE       | 버킷리스트 항목 삭제                           |
 | `PUT`    | `/profile/{userId}/bucketlist/{goalId}/status`   | PRIVATE       | 항목 완료/미완료 상태 토글 + 완료일자 응답 포함          |
